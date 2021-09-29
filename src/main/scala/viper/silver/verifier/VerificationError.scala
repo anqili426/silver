@@ -608,6 +608,13 @@ object reasons {
     def withNode(offendingNode: errors.ErrorNode = this.offendingNode) = NegativePermission(offendingNode.asInstanceOf[Exp])
   }
 
+  case class UndefinedSepAlgebraResult(offendingNode: Exp) extends AbstractErrorReason {
+    val id = "separation.algebra.result.undefined"
+
+    override def readableMessage: String = s"Permission amount $offendingNode is undefined."
+    def withNode(offendingNode: errors.ErrorNode = this.offendingNode) = UndefinedSepAlgebraResult(offendingNode.asInstanceOf[Exp])
+  }
+
   case class InsufficientPermission(offendingNode: LocationAccess) extends AbstractErrorReason {
     val id = "insufficient.permission"
     def readableMessage = s"There might be insufficient permission to access " + FastPrettyPrinter.pretty(offendingNode)

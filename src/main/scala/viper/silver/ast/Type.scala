@@ -55,6 +55,8 @@ sealed trait AtomicType extends BuiltInType{
 case object Int extends AtomicType
 /** Type for booleans. */
 case object Bool extends AtomicType
+/** Type for Rationals */
+case object Rational extends AtomicType
 /** Type for permissions. */
 case object Perm extends AtomicType
 /** Type for references. */

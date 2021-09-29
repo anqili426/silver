@@ -633,6 +633,10 @@ sealed trait BoolDomainFunc extends AbstractDomainFunc {
 sealed trait PermDomainFunc extends AbstractDomainFunc {
   lazy val typ = Perm
 }
+/** Domain functions with return type rational */
+sealed trait RatioDomainFunc extends AbstractDomainFunc {
+  lazy val typ = Rational
+}
 
 /** Domain functions that represent built-in binary operators */
 sealed trait BinOp extends Op {
@@ -650,6 +654,12 @@ sealed trait LeftAssoc {
 sealed trait IntBinOp extends BinOp {
   lazy val leftTyp = Int
   lazy val rightTyp = Int
+}
+
+/** Domain functions that represent built-in binary operators where both arguments are rationals. */
+sealed trait RatioBinOp extends BinOp {
+  lazy val leftTyp = Rational
+  lazy val rightTyp = Rational
 }
 
 /** Domain functions that represent built-in binary operators where both arguments are booleans. */
@@ -694,7 +704,7 @@ case object ModOp extends ProdOp("%") with IntBinOp with IntDomainFunc
 // Arithmetic permission operators
 case object PermAddOp extends SumOp("+") with PermBinOp with PermDomainFunc
 case object PermSubOp extends SumOp("-") with PermBinOp with PermDomainFunc
-case object PermMulOp extends ProdOp("*") with PermBinOp with PermDomainFunc
+case object PermMulOp extends ProdOp("*") with PermBinOp with PermDomainFunc //TODO: this should not exist
 case object IntPermMulOp extends ProdOp("*") with BinOp with PermDomainFunc {
   lazy val leftTyp = Int
   lazy val rightTyp = Perm
@@ -707,6 +717,25 @@ case object FracOp extends ProdOp("/") with BinOp with PermDomainFunc {
   lazy val leftTyp = Int
   lazy val rightTyp = Int
 }
+
+
+// Arithmetic rational operators
+case object RatioAddOp extends SumOp("+") with RatioBinOp with RatioDomainFunc
+case object RatioSubOp extends SumOp("-") with RatioBinOp with RatioDomainFunc
+case object RatioMulOp extends ProdOp("*") with RatioBinOp with RatioDomainFunc
+case object IntRatioMulOp extends ProdOp("*") with BinOp with RatioDomainFunc {
+  lazy val leftTyp = Int
+  lazy val rightTyp = Rational
+}
+case object RatioDivOp extends ProdOp("/") with BinOp with RatioDomainFunc {
+  lazy val leftTyp = Rational
+  lazy val rightTyp = Int
+}
+case object RatioOp extends ProdOp("/") with BinOp with RatioDomainFunc {
+  lazy val leftTyp = Int
+  lazy val rightTyp = Int
+}
+
 
 /** Integer negation. */
 case object NegOp extends UnOp with IntDomainFunc {
@@ -723,6 +752,13 @@ case object PermNegOp extends UnOp with PermDomainFunc {
   lazy val fixity = Prefix
 }
 
+case object RatioNegOp extends UnOp with RatioDomainFunc {
+  lazy val expTyp = Rational
+  lazy val op = "-"
+  lazy val priority = 10
+  lazy val fixity = Prefix
+}
+
 // Integer comparison operators
 case object LtOp extends RelOp("<") with IntBinOp
 case object LeOp extends RelOp("<=") with IntBinOp
@@ -734,6 +770,12 @@ case object PermLtOp extends RelOp("<") with PermBinOp
 case object PermLeOp extends RelOp("<=") with PermBinOp
 case object PermGtOp extends RelOp(">") with PermBinOp
 case object PermGeOp extends RelOp(">=") with PermBinOp
+
+// Rational comparison operators
+case object RatioLtOp extends RelOp("<") with RatioBinOp
+case object RatioLeOp extends RelOp("<=") with RatioBinOp
+case object RatioGtOp extends RelOp(">") with RatioBinOp
+case object RatioGeOp extends RelOp(">=") with RatioBinOp
 
 /** Boolean or. */
 case object OrOp extends BoolBinOp with BoolDomainFunc with LeftAssoc {

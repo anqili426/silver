@@ -252,12 +252,14 @@ case class Translator(program: PProgram) {
             r.typ match {
               case Int => Add(l, r)(pos)
               case Perm => PermAdd(l, r)(pos)
+              case Rational => RatioAdd(l, r)(pos)
               case _ => sys.error("should not occur in type-checked program")
             }
           case "-" =>
             r.typ match {
               case Int => Sub(l, r)(pos)
               case Perm => PermSub(l, r)(pos)
+              case Rational => RatioSub(l, r)(pos)
               case _ => sys.error("should not occur in type-checked program")
             }
           case "*" =>
@@ -266,12 +268,14 @@ case class Translator(program: PProgram) {
                 l.typ match {
                   case Int => Mul(l, r)(pos)
                   case Perm => IntPermMul(r, l)(pos)
+                  case Rational => IntRatioMul(r, l)(pos)
                   case _ => sys.error("should not occur in type-checked program")
                 }
               case Perm =>
                 l.typ match {
                   case Int => IntPermMul(l, r)(pos)
                   case Perm => PermMul(l, r)(pos)
+                  case Rational => RatioMul(l, r)(pos)
                   case _ => sys.error("should not occur in type-checked program")
                 }
               case _ => sys.error("should not occur in type-checked program")
@@ -280,12 +284,15 @@ case class Translator(program: PProgram) {
             assert(r.typ==Int)
             l.typ match {
               case Perm => PermDiv(l, r)(pos)
+              case Rational => RatioDiv(l, r)(pos)
               case Int  =>
                 assert (r.typ==Int)
                 if (ttyp(pbe.typ) == Int)
                   Div(l, r)(pos)
-                else
+                else if (ttyp(pbe.typ) == Perm)
                   FractionalPerm(l, r)(pos)
+                else
+                  RatioAmount(l, r)(pos)
               case _    => sys.error("should not occur in type-checked program")
             }
           case "\\" => Div(l, r)(pos)
@@ -294,24 +301,28 @@ case class Translator(program: PProgram) {
             l.typ match {
               case Int => LtCmp(l, r)(pos)
               case Perm => PermLtCmp(l, r)(pos)
+              case Rational => RatioLtCmp(l, r)(pos)
               case _ => sys.error("unexpected type")
             }
           case "<=" =>
             l.typ match {
               case Int => LeCmp(l, r)(pos)
               case Perm => PermLeCmp(l, r)(pos)
+              case Rational => RatioLeCmp(l, r)(pos)
               case _ => sys.error("unexpected type")
             }
           case ">" =>
             l.typ match {
               case Int => GtCmp(l, r)(pos)
               case Perm => PermGtCmp(l, r)(pos)
+              case Rational => RatioGeCmp(l, r)(pos)
               case _ => sys.error("unexpected type")
             }
           case ">=" =>
             l.typ match {
               case Int => GeCmp(l, r)(pos)
               case Perm => PermGeCmp(l, r)(pos)
+              case Rational => RatioGeCmp(l, r)(pos)
               case _ => sys.error("unexpected type")
             }
           case "==" => EqCmp(l, r)(pos)
@@ -342,7 +353,8 @@ case class Translator(program: PProgram) {
           case "-" =>
             e.typ match {
               case Int => Minus(e)(pos)
-              case Perm => PermMinus(e)(pos)
+              case Rational => RatioMinus(e)(pos)
+              case Perm => PermMinus(e)(pos) //TODO: This should not exist; non-fractional permissions don't have this
               case _ => sys.error("unexpected type")
             }
           case "!" => Not(e)(pos)
@@ -556,6 +568,7 @@ case class Translator(program: PProgram) {
       case "Bool" => Bool
       case "Ref" => Ref
       case "Perm" => Perm
+      case "Rational" => Rational
     }
     case PSeqType(elemType) =>
       SeqType(ttyp(elemType))

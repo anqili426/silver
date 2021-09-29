@@ -136,6 +136,7 @@ object TypeHelper {
   val Bool = PPrimitiv("Bool")((NoPosition, NoPosition))
   val Perm = PPrimitiv("Perm")((NoPosition, NoPosition))
   val Ref = PPrimitiv("Ref")((NoPosition, NoPosition))
+  val Ratio = PPrimitiv("Rational")((NoPosition, NoPosition))
   val Pred = PPredicateType()((NoPosition, NoPosition))
   val Wand = PWandType()((NoPosition, NoPosition))
 }
@@ -536,16 +537,23 @@ class PBinExp(val left: PExp, val opName: String, val right: PExp)(val pos: (Pos
     }
   val signatures : List[PTypeSubstitution] = opName match {
     case "+" | "-" => List(
+      Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Ratio),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int)
     )
     case "*" => List(
+      Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Ratio),
+      Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Int, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int)
     )
     case "/" => List(
+      Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Ratio),
+      Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Ratio),
+      Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Int, POpApp.pResS -> Ratio),
+      Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Int, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int)
@@ -553,6 +561,7 @@ class PBinExp(val left: PExp, val opName: String, val right: PExp)(val pos: (Pos
     case "\\" | "%" => List(
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int))
     case "<" | "<=" | ">" | ">=" => List(
+      Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Bool),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Bool),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Bool)
     )
@@ -630,7 +639,7 @@ case class PUnExp(opName: String, exp: PExp)(val pos: (Position, Position)) exte
   override val signatures : List[PTypeSubstitution] = opName match {
     case "-" => List(
       Map(POpApp.pArgS(0) -> Int, POpApp.pResS -> Int),
-      Map(POpApp.pArgS(0) -> Perm, POpApp.pResS -> Perm)
+      Map(POpApp.pArgS(0) -> Ratio, POpApp.pResS -> Ratio)
     )
     case "!" => List(
       Map(POpApp.pArgS(0) -> Bool, POpApp.pResS -> Bool)
