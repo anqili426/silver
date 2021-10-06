@@ -14,3 +14,60 @@ define foo() {
 method m() {
   foo()
 }
+
+//APPENDED PERMISSION MODEL
+
+domain _Perm {
+    function unit(): Perm 
+    function full(): Perm
+    function plus(x: Perm, y: Perm): Perm
+    function minus(x: Perm, y: Perm): Perm
+    function geq(x: Perm, y: Perm): Bool
+    function joinable(x: Perm, y: Perm): Bool
+
+    function times(x: Perm, y: Perm): Perm
+
+    //Auxiliary functions
+    function share(x: Rational): Perm
+    function valid_share(x: Rational): Bool
+    function biConstr(Int, Int): Perm
+
+    //Axioms
+    axiom axBiConstr {forall a: Int, b: Int :: {biConstr(a, b)} biConstr(a, b) == share(a/b)}
+
+
+    axiom axValid { forall x: Rational :: {valid_share(x)}
+        valid_share(x) <==> (x >= 0/1 && x <= 1/1)
+    }
+    axiom axUnit { unit() == share(0/1) }
+    axiom axFull { full() == share(1/1) }
+    axiom axInj { forall a: Rational, b: Rational :: { share(a), share(b) }
+        share(a) == share(b) ==> a == b
+    }
+    axiom axPlus { forall a: Rational, b: Rational :: { plus(share(a), share(b)) }
+        joinable(share(a), share(b)) ==> plus(share(a), share(b)) == share(a + b)
+    }
+    axiom axMinus { forall a: Rational, b: Rational :: { minus(share(a), share(b)) }
+        geq(share(a), share(b)) ==> minus(share(a), share(b)) == share(a - b)
+    }
+    axiom axCanJoin { forall a: Rational, b: Rational :: { joinable(share(a), share(b)) }
+        joinable(share(a), share(b)) <==> valid_share(a) && valid_share(b) && valid_share(a + b)
+    }
+    axiom axGeq { forall a: Rational, b: Rational :: { geq(share(a), share(b)) }
+        geq(share(a), share(b)) <==> valid_share(a) && valid_share(b) && valid_share(a - b)
+    }
+    axiom axMul { forall a: Rational, b: Rational :: {times(share(a), share(b))} times(share(a), share(b)) == share(a * b)}
+
+    axiom axJoinComm {forall p: Perm, q: Perm :: {plus(p, q)} plus(p, q) == plus(q, p)}
+    axiom axJoinAssoc {forall p: Perm, q: Perm, r: Perm :: {plus(plus(p, q), r)} plus(plus(p, q), r) == plus(p, plus(q, r))}
+    axiom axJoinCancel { forall p : Perm, q: Perm, x: Perm :: {plus(p, x), plus(q, x)} plus(p, x) == plus(q, x) ==> p == q}
+
+    axiom axUnitGeq { forall p: Perm :: {geq(p, unit())} geq(p, unit())}
+    axiom axUnitGeq2 { forall p: Perm :: {geq(unit(), p)} geq(unit(), p) <==> p == unit()}
+    axiom axFullGeq { forall p: Perm :: {geq(full(), p)} geq(full(), p)}
+    axiom axFullGeq2 { forall p: Perm :: {geq(p, full())} geq(p, full()) <==> p == full()}
+
+    axiom axUnitJoin { forall p: Perm :: {plus(unit(), p)} plus(unit(), p) == p}
+    axiom axTimes0 { forall p: Perm :: {times(unit(), p)} times(unit(), p) == unit()}
+    axiom axTimes1 { forall p: Perm :: {times(full(), p)} times(unit(), p) == p}
+}

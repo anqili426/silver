@@ -275,7 +275,13 @@ case class Translator(program: PProgram) {
                 l.typ match {
                   case Int => IntPermMul(l, r)(pos)
                   case Perm => PermMul(l, r)(pos)
-                  case Rational => RatioMul(l, r)(pos)
+                  //case Rational => RatioMul(l, r)(pos)
+                  case _ => sys.error("should not occur in type-checked program")
+                }
+              case Rational =>
+                l.typ match {
+                  case Rational => RatioMul(l, r)(pos) //Todo: this is probably incomplete
+                  case Int => IntRatioMul(l, r)(pos)
                   case _ => sys.error("should not occur in type-checked program")
                 }
               case _ => sys.error("should not occur in type-checked program")
