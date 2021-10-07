@@ -201,6 +201,12 @@ domain _Perm {
     axiom axFullGeq2 { forall p: Perm :: {geq(p, full())} geq(p, full()) <==> p == full()}
 
     axiom axUnitJoin { forall p: Perm :: {plus(unit(), p)} plus(unit(), p) == p}
+    axiom axUnitJoinable { forall p: Perm :: {joinable(p, unit())} joinable(p, unit())}
+    axiom axJoinableComm { forall p: Perm, q: Perm :: {joinable(p, q)} joinable(p, q) == joinable(q, p)}
     axiom axTimes0 { forall p: Perm :: {times(unit(), p)} times(unit(), p) == unit()}
     axiom axTimes1 { forall p: Perm :: {times(full(), p)} times(unit(), p) == p}
+
+    axiom axGeqPlus { forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) ==> geq(a, x)}
+    axiom axGeqMinus {forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) <==> geq(minus(a, y), x)}
+
 }
