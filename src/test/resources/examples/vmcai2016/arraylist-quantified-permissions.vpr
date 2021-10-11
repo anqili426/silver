@@ -151,61 +151,61 @@ method insert(this: Ref, elem: Int) returns (j: Int)
 domain _Perm {
     function unit(): Perm 
     function full(): Perm
-    function plus(x: Perm, y: Perm): Perm
-    function minus(x: Perm, y: Perm): Perm
-    function geq(x: Perm, y: Perm): Bool
-    function joinable(x: Perm, y: Perm): Bool
+    function plus(_x: Perm, _y: Perm): Perm
+    function minus(_x: Perm, _y: Perm): Perm
+    function geq(_x: Perm, _y: Perm): Bool
+    function joinable(_x: Perm, _y: Perm): Bool
 
-    function times(x: Perm, y: Perm): Perm
+    function times(_x: Perm, _y: Perm): Perm
 
     //Auxiliary functions
-    function share(x: Rational): Perm
-    function valid_share(x: Rational): Bool
+    function share(_x: Rational): Perm
+    function valid_share(_x: Rational): Bool
     function biConstr(Int, Int): Perm
 
     //Axioms
-    axiom axBiConstr {forall a: Int, b: Int :: {biConstr(a, b)} biConstr(a, b) == share(a/b)}
+    axiom axBiConstr {forall _a: Int, _b: Int :: {biConstr(_a, _b)} biConstr(_a, _b) == share(_a/_b)}
 
 
-    axiom axValid { forall x: Rational :: {valid_share(x)}
-        valid_share(x) <==> (x >= 0/1 && x <= 1/1)
+    axiom axValid { forall _x: Rational :: {valid_share(_x)}
+        valid_share(_x) <==> (_x >= 0/1 && _x <= 1/1)
     }
     axiom axUnit { unit() == share(0/1) }
     axiom axFull { full() == share(1/1) }
-    axiom axInj { forall a: Rational, b: Rational :: { share(a), share(b) }
-        share(a) == share(b) ==> a == b
+    axiom axInj { forall _a: Rational, _b: Rational :: { share(_a), share(_b) }
+        share(_a) == share(_b) ==> _a == _b
     }
-    axiom axPlus { forall a: Rational, b: Rational :: { plus(share(a), share(b)) }
-        joinable(share(a), share(b)) ==> plus(share(a), share(b)) == share(a + b)
+    axiom axPlus { forall _a: Rational, _b: Rational :: { plus(share(_a), share(_b)) }
+        joinable(share(_a), share(_b)) ==> plus(share(_a), share(_b)) == share(_a + _b)
     }
-    axiom axMinus { forall a: Rational, b: Rational :: { minus(share(a), share(b)) }
-        geq(share(a), share(b)) ==> minus(share(a), share(b)) == share(a - b)
+    axiom axMinus { forall _a: Rational, _b: Rational :: { minus(share(_a), share(_b)) }
+        geq(share(_a), share(_b)) ==> minus(share(_a), share(_b)) == share(_a - _b)
     }
-    axiom axCanJoin { forall a: Rational, b: Rational :: { joinable(share(a), share(b)) }
-        joinable(share(a), share(b)) <==> valid_share(a) && valid_share(b) && valid_share(a + b)
+    axiom axCanJoin { forall _a: Rational, _b: Rational :: { joinable(share(_a), share(_b)) }
+        joinable(share(_a), share(_b)) <==> valid_share(_a) && valid_share(_b) && valid_share(_a + _b)
     }
-    axiom axGeq { forall a: Rational, b: Rational :: { geq(share(a), share(b)) }
-        geq(share(a), share(b)) <==> valid_share(a) && valid_share(b) && valid_share(a - b)
+    axiom axGeq { forall _a: Rational, _b: Rational :: { geq(share(_a), share(_b)) }
+        geq(share(_a), share(_b)) <==> valid_share(_a) && valid_share(_b) && valid_share(_a - _b)
     }
-    axiom axMul { forall a: Rational, b: Rational :: {times(share(a), share(b))} times(share(a), share(b)) == share(a * b)}
+    axiom axMul { forall _a: Rational, _b: Rational :: {times(share(_a), share(_b))} times(share(_a), share(_b)) == share(_a * _b)}
 
-    axiom axJoinComm {forall p: Perm, q: Perm :: {plus(p, q)} plus(p, q) == plus(q, p)}
-    axiom axJoinAssoc {forall p: Perm, q: Perm, r: Perm :: {plus(plus(p, q), r)} plus(plus(p, q), r) == plus(p, plus(q, r))}
-    axiom axJoinCancel { forall p : Perm, q: Perm, x: Perm :: {plus(p, x), plus(q, x)} plus(p, x) == plus(q, x) ==> p == q}
+    axiom axJoinComm {forall _p: Perm, _q: Perm :: {plus(_p, _q)} plus(_p, _q) == plus(_q, _p)}
+    axiom axJoinAssoc {forall _p: Perm, _q: Perm, _r: Perm :: {plus(plus(_p, _q), _r)} plus(plus(_p, _q), _r) == plus(_p, plus(_q, _r))}
+    axiom axJoinCancel { forall _p: Perm, _q: Perm, _x: Perm :: {plus(_p, _x), plus(_q, _x)} plus(_p, _x) == plus(_q, _x) ==> _p == _q}
 
-    axiom axUnitGeq { forall p: Perm :: {geq(p, unit())} geq(p, unit())}
-    axiom axUnitGeq2 { forall p: Perm :: {geq(unit(), p)} geq(unit(), p) <==> p == unit()}
-    axiom axFullGeq { forall p: Perm :: {geq(full(), p)} geq(full(), p)}
-    axiom axFullGeq2 { forall p: Perm :: {geq(p, full())} geq(p, full()) <==> p == full()}
+    axiom axUnitGeq { forall _p: Perm :: {geq(_p, unit())} geq(_p, unit())}
+    axiom axUnitGeq2 { forall _p: Perm :: {geq(unit(),_p)} geq(unit(),_p) <==> _p == unit()}
+    axiom axFullGeq { forall _p: Perm :: {geq(full(),_p)} geq(full(),_p)}
+    axiom axFullGeq2 { forall _p: Perm :: {geq(_p, full())} geq(_p, full()) <==> _p == full()}
 
-    axiom axUnitJoin { forall p: Perm :: {plus(unit(), p)} plus(unit(), p) == p}
-    axiom axUnitJoinable { forall p: Perm :: {joinable(p, unit())} joinable(p, unit())}
-    axiom axJoinableComm { forall p: Perm, q: Perm :: {joinable(p, q)} joinable(p, q) == joinable(q, p)}
-    axiom axTimes0 { forall p: Perm :: {times(unit(), p)} times(unit(), p) == unit()}
-    axiom axTimes1 { forall p: Perm :: {times(full(), p)} times(unit(), p) == p}
+    axiom axUnitJoin { forall _p: Perm :: {plus(unit(),_p)} plus(unit(),_p) == _p}
+    axiom axUnitJoinable { forall _p: Perm :: {joinable(_p, unit())} joinable(_p, unit())}
+    axiom axJoinableComm { forall _p: Perm, _q: Perm :: {joinable(_p, _q)} joinable(_p, _q) == joinable(_q,_p)}
+    axiom axTimes0 { forall _p: Perm :: {times(unit(),_p)} times(unit(),_p) == unit()}
+    axiom axTimes1 { forall _p: Perm :: {times(full(),_p)} times(unit(),_p) == _p}
 
-    axiom axGeqPlus { forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) ==> geq(a, x)}
-    axiom axGeqMinus {forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) ==> geq(minus(a, y), x)}
-    axiom axMinusUneq { forall p: Perm, q: Perm :: {geq(p, q)} geq(p, q) && p != q ==> minus(p, q) != unit()}
+    axiom axGeqPlus { forall _a: Perm, _x: Perm, _y: Perm :: {geq(_a, plus(_x, _y))} geq(_a, plus(_x, _y)) ==> geq(_a, _x)}
+    axiom axGeqMinus {forall _a: Perm, _x: Perm, _y: Perm :: {geq(_a, plus(_x, _y))} geq(_a, plus(_x, _y)) ==> geq(minus(_a, _y), _x)}
+    axiom axMinusUneq { forall _p: Perm, _q: Perm :: {geq(_p, _q)} geq(_p, _q) && _p != _q ==> minus(_p, _q) != unit()}
 
 }
