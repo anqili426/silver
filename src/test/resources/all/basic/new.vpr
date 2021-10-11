@@ -2,6 +2,9 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 // test aliasing information of newly created objects
+
+   //:: IgnoreFile(/carbon/issue/999/)
+
 method t1(this: Ref, a: Int, b: Bool, g: Ref) returns (c: Bool, d: Int)
     requires b && acc(this.value, write)
     ensures (d == 1) || (d == 2)
@@ -165,6 +168,7 @@ domain _Perm {
     axiom axTimes1 { forall p: Perm :: {times(full(), p)} times(unit(), p) == p}
 
     axiom axGeqPlus { forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) ==> geq(a, x)}
-    axiom axGeqMinus {forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) && joinable(x, y) <==> geq(minus(a, y), x) && geq(a, y)}
+    axiom axGeqMinus {forall a: Perm, x: Perm, y: Perm :: {geq(a, plus(x, y))} geq(a, plus(x, y)) ==> geq(minus(a, y), x)}
+    axiom axMinusUneq { forall p: Perm, q: Perm :: {geq(p, q)} geq(p, q) && p != q ==> minus(p, q) != unit()}
 
 }
