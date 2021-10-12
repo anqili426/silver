@@ -65,15 +65,22 @@ domain _Perm {
     axiom axUnitGeq2 { forall _p: Perm :: {geq(unit(),_p)} geq(unit(),_p) <==> _p == unit()}
     axiom axFullGeq { forall _p: Perm :: {geq(full(),_p)} geq(full(),_p)}
     axiom axFullGeq2 { forall _p: Perm :: {geq(_p, full())} geq(_p, full()) <==> _p == full()}
+    axiom axGeqId { forall _p: Perm :: {geq(_p, _p)} geq(_p, _p)}
+    axiom axMinusId { forall _p: Perm :: {minus(_p, _p)} minus(_p, _p) == unit()}
+
 
     axiom axUnitJoin { forall _p: Perm :: {plus(unit(),_p)} plus(unit(),_p) == _p}
     axiom axUnitJoinable { forall _p: Perm :: {joinable(_p, unit())} joinable(_p, unit())}
     axiom axJoinableComm { forall _p: Perm, _q: Perm :: {joinable(_p, _q)} joinable(_p, _q) == joinable(_q,_p)}
     axiom axTimes0 { forall _p: Perm :: {times(unit(),_p)} times(unit(),_p) == unit()}
-    axiom axTimes1 { forall _p: Perm :: {times(full(),_p)} times(unit(),_p) == _p}
+    axiom axTimes1 { forall _p: Perm :: {times(full(),_p)} times(full(),_p) == _p}
 
     axiom axGeqPlus { forall _a: Perm, _x: Perm, _y: Perm :: {geq(_a, plus(_x, _y))} geq(_a, plus(_x, _y)) ==> geq(_a, _x)}
     axiom axGeqMinus {forall _a: Perm, _x: Perm, _y: Perm :: {geq(_a, plus(_x, _y))} geq(_a, plus(_x, _y)) ==> geq(minus(_a, _y), _x)}
     axiom axMinusUneq { forall _p: Perm, _q: Perm :: {geq(_p, _q)} geq(_p, _q) && _p != _q ==> minus(_p, _q) != unit()}
+
+    axiom axPositive {forall _p: Perm, _q: Perm :: {plus(_p, _q)} plus(_p, _q) == unit() ==> _p == unit() && _q == unit()}
+    axiom axPlusGeq {forall _p: Perm, _q: Perm :: {geq(plus(_p, _q), _p)} joinable(_p, _q) ==> geq(plus(_p, _q), _p)}
+    axiom axMinusCancel {forall _p: Perm, _q: Perm :: {minus(plus(_p, _q), _q)} minus(plus(_p, _q), _q) == _p}
 
 }
