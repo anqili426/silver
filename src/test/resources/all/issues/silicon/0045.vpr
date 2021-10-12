@@ -12,11 +12,11 @@ domain Natural {
 
   function less(l: Natural, r: Natural): Bool
 
-  function plus(l: Natural, r: Natural): Natural
+  function add(l: Natural, r: Natural): Natural
 
-  function minus(l: Natural, r: Natural): Natural
+  function sub(l: Natural, r: Natural): Natural
 
-  function times(l: Natural, r: Natural): Natural
+  function mul(l: Natural, r: Natural): Natural
 
   function minimum(l: Natural, r: Natural): Natural
 
@@ -73,35 +73,35 @@ domain Natural {
       less(successor(x), successor(y)) == less(x, y)
   }
 
-  axiom plusZeroNatural {
-    forall y: Natural :: plus(zero(), y) == y
+  axiom addZeroNatural {
+    forall y: Natural :: add(zero(), y) == y
   }
 
-  axiom plusSuccessorNatural {
+  axiom addSuccessorNatural {
     forall x: Natural, y: Natural ::
-      plus(successor(x), y) == successor(plus(x, y))
+      add(successor(x), y) == successor(add(x, y))
   }
 
-  axiom minusZeroNatural {
-    forall n: Natural :: minus(zero(), n) == zero()
+  axiom subZeroNatural {
+    forall n: Natural :: sub(zero(), n) == zero()
   }
 
-  axiom minusNaturalZero {
-    forall x: Natural :: minus(x, zero()) == x
+  axiom subNaturalZero {
+    forall x: Natural :: sub(x, zero()) == x
   }
 
-  axiom minusSuccessorSuccessor {
+  axiom subSuccessorSuccessor {
     forall x: Natural, y: Natural ::
-      minus(successor(x), successor(y)) == minus(x, y)
+      sub(successor(x), successor(y)) == sub(x, y)
   }
 
-  axiom timesZeroNatural {
-    forall n: Natural :: times(zero(), n) == zero()
+  axiom mulZeroNatural {
+    forall n: Natural :: mul(zero(), n) == zero()
   }
 
-  axiom timesSuccessorNatural {
+  axiom mulSuccessorNatural {
     forall x: Natural, y: Natural ::
-      times(successor(x), y) == plus(y, times(x, y))
+      mul(successor(x), y) == add(y, mul(x, y))
   }
 
   axiom minimumZeroNatural {
@@ -373,7 +373,7 @@ domain List[A] {
   }
 
   axiom sumCons {
-    forall n: Natural, l: List[Natural] :: sum(cons(n, l)) == plus(n, sum(l))
+    forall n: Natural, l: List[Natural] :: sum(cons(n, l)) == add(n, sum(l))
   }
 
   axiom hasMultipleNil {
@@ -458,6 +458,7 @@ method property01()
                           concatenate(take(n_5, cons(e_0, l_0)),
                             drop(n_5, cons(e_0, l_0))) == cons(e_0, l_0)]
 { }
+
 
 //APPENDED PERMISSION MODEL
 

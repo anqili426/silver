@@ -1,6 +1,5 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
-   //:: IgnoreFile(/carbon/issue/999/)
 
 /* Intended to test the overhead of Silicon's failure-driven heuristics, e.g. state consolidations.
  * At some point, the implementation had a bug which made the verification of the failing tests
@@ -24,7 +23,6 @@ domain reads {
   function rd() : Perm
   axiom rdPositive { rd() > none }
 }
-
 
 
 

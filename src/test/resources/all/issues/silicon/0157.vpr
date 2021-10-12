@@ -53,10 +53,10 @@ method test06(x: Ref)
 /* Code submitted alongside the issue */
 
 field Testtk: Ref
-field joinable: Bool
+field _joinable: Bool
 
 method TestBug(this: Ref, k$_1: Perm)
-  requires acc(this.Testtk, write) && (this.Testtk != null) && acc(this.Testtk.joinable, write) && this.Testtk.joinable
+  requires acc(this.Testtk, write) && (this.Testtk != null) && acc(this.Testtk._joinable, write) && this.Testtk.joinable
 {
   //:: ExpectedOutput(assert.failed:assertion.false)
   assert false
@@ -64,7 +64,7 @@ method TestBug(this: Ref, k$_1: Perm)
 
 method TestBug1(this: Ref, k$_1: Perm)
   requires acc(this.Testtk, write) && (this.Testtk != null)
-  requires acc(this.Testtk.joinable, write) && this.Testtk.joinable
+  requires acc(this.Testtk._joinable, write) && this.Testtk._joinable
 {
   //:: ExpectedOutput(assert.failed:assertion.false)
   assert false

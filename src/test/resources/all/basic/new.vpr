@@ -3,7 +3,6 @@
 
 // test aliasing information of newly created objects
 
-   //:: IgnoreFile(/carbon/issue/999/)
 
 method t1(this: Ref, a: Int, b: Bool, g: Ref) returns (c: Bool, d: Int)
     requires b && acc(this.value, write)
