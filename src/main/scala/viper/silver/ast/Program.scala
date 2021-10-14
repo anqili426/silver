@@ -637,6 +637,10 @@ sealed trait PermDomainFunc extends AbstractDomainFunc {
 sealed trait RatioDomainFunc extends AbstractDomainFunc {
   lazy val typ = Rational
 }
+/** Domain functions with return type scalar */
+sealed trait ScalDomainFunc extends AbstractDomainFunc {
+  lazy val typ = Scalar
+}
 
 /** Domain functions that represent built-in binary operators */
 sealed trait BinOp extends Op {
@@ -673,6 +677,13 @@ sealed trait PermBinOp extends BinOp {
   lazy val leftTyp = Perm
   lazy val rightTyp = Perm
 }
+
+/** Domain functions that represent built-in binary operators where both arguments are scalars. */
+sealed trait ScalBinOp extends BinOp {
+  lazy val leftTyp = Scalar
+  lazy val rightTyp = Scalar
+}
+
 
 /** Domain functions that represent built-in unary operators */
 sealed trait UnOp extends Op {
@@ -737,6 +748,21 @@ case object RatioOp extends ProdOp("/") with BinOp with RatioDomainFunc {
 }
 
 
+
+// Arithmetic scalar operators
+case object ScalAddOp extends SumOp("+") with ScalBinOp with ScalDomainFunc
+case object ScalSubOp extends SumOp("-") with ScalBinOp with ScalDomainFunc
+case object ScalMulOp extends ProdOp("*") with ScalBinOp with ScalDomainFunc
+case object ScalPermMulOp extends ProdOp("*") with BinOp with PermDomainFunc {
+  lazy val leftTyp = Scalar
+  lazy val rightTyp = Perm
+}
+
+case object ScalOp extends ProdOp("/") with BinOp with ScalDomainFunc {
+  lazy val leftTyp = Int
+  lazy val rightTyp = Int
+}
+
 /** Integer negation. */
 case object NegOp extends UnOp with IntDomainFunc {
   lazy val expTyp = Int
@@ -765,17 +791,25 @@ case object LeOp extends RelOp("<=") with IntBinOp
 case object GtOp extends RelOp(">") with IntBinOp
 case object GeOp extends RelOp(">=") with IntBinOp
 
+// Rational comparison operators
+case object RatioLtOp extends RelOp("<") with RatioBinOp
+case object RatioLeOp extends RelOp("<=") with RatioBinOp
+case object RatioGtOp extends RelOp(">") with RatioBinOp
+case object RatioGeOp extends RelOp(">=") with RatioBinOp
+
 // Permission comparison operators
 case object PermLtOp extends RelOp("<") with PermBinOp
 case object PermLeOp extends RelOp("<=") with PermBinOp
 case object PermGtOp extends RelOp(">") with PermBinOp
 case object PermGeOp extends RelOp(">=") with PermBinOp
 
-// Rational comparison operators
-case object RatioLtOp extends RelOp("<") with RatioBinOp
-case object RatioLeOp extends RelOp("<=") with RatioBinOp
-case object RatioGtOp extends RelOp(">") with RatioBinOp
-case object RatioGeOp extends RelOp(">=") with RatioBinOp
+// Scalar comparison operators
+case object ScalLtOp extends RelOp("<") with ScalBinOp
+case object ScalLeOp extends RelOp("<=") with ScalBinOp
+case object ScalGtOp extends RelOp(">") with ScalBinOp
+case object ScalGeOp extends RelOp(">=") with ScalBinOp
+
+
 
 /** Boolean or. */
 case object OrOp extends BoolBinOp with BoolDomainFunc with LeftAssoc {

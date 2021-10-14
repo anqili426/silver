@@ -309,16 +309,32 @@ sealed trait RatioExp extends Exp {
   override lazy val typ = Rational
 }
 
+sealed trait ScalExp extends Exp {
+  override lazy val typ = Scalar
+}
+
 
 
 /** A wild card permission. Has an unknown value, but there are no guarantees that it will be the same inside one method. */
 case class WildcardPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends PermExp
+
+/** A wild card scalar. Has an unknown value, but there are no guarantees that it will be the same inside one method. */
+case class WildcardScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends ScalExp
+
+
 
 /** The full permission. */
 case class FullPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AbstractConcretePerm(1, 1)
 
 /** No permission. */
 case class NoPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AbstractConcretePerm(0, 1)
+
+/** The identity scalar (analogous to full permission). */
+case class IdScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AbstractConcretePerm(1, 1)
+
+/** Zero scalar (analogous to no permission). */
+case class ZeroScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends ScalExp
+
 
 /** An epsilon permission. */
 case class EpsilonPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends PermExp
@@ -332,11 +348,18 @@ case class FractionalPerm(left: Exp, right: Exp)(val pos: Position = NoPosition,
 }
 
 /** A fraction that is not a permission */
-case class RatioAmount(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(RatioOp) with RatioExp with ForbiddenInTrigger
+case class RatioAmount(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(RatioOp) with RatioExp with ForbiddenInTrigger {
+  override lazy val check: Seq[ConsistencyError] =
+    (if (left.typ != Int) Seq(ConsistencyError(s"Numerator type of rational must be Int, but found ${left.typ}", left.pos)) else Seq()) ++
+      (if (right.typ != Int) Seq(ConsistencyError(s"Denominator type of rational must be Int, but found ${right.typ}", right.pos)) else Seq())
+}
+
+/** A scalar amount specified by two integers in the format m/n */ //NOTE: This syntax is present for backwards compatibility only
+case class ScalarAmount(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalOp) with RatioExp with ForbiddenInTrigger
 {
   override lazy val check : Seq[ConsistencyError] =
-    (if(left.typ != Int) Seq(ConsistencyError(s"Numerator type of rational must be Int, but found ${left.typ}", left.pos)) else Seq()) ++
-      (if(right.typ != Int) Seq(ConsistencyError(s"Denominator type of rational must be Int, but found ${right.typ}", right.pos)) else Seq())
+    (if(left.typ != Int) Seq(ConsistencyError(s"First parameter of scalar constructor must be Int, but found ${left.typ}", left.pos)) else Seq()) ++
+      (if(right.typ != Int) Seq(ConsistencyError(s"Second parameter of scalar constructor must be Int, but found ${right.typ}", right.pos)) else Seq())
 }
 
 case class PermDiv(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(PermDivOp) with PermExp with ForbiddenInTrigger
@@ -381,6 +404,18 @@ case class RatioLtCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val
 case class RatioLeCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(RatioLeOp) with ForbiddenInTrigger
 case class RatioGtCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(RatioGtOp) with ForbiddenInTrigger
 case class RatioGeCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(RatioGeOp) with ForbiddenInTrigger
+
+// Arithmetic expressions
+case class ScalAdd(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalAddOp) with ScalExp with ForbiddenInTrigger
+case class ScalSub(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalSubOp) with ScalExp with ForbiddenInTrigger
+case class ScalMul(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalMulOp) with ScalExp with ForbiddenInTrigger
+case class ScalApply(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalPermMulOp) with PermExp with ForbiddenInTrigger
+
+// Comparison expressions
+case class ScalLtCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalLtOp) with ForbiddenInTrigger
+case class ScalLeCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalLeOp) with ForbiddenInTrigger
+case class ScalGtCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalGtOp) with ForbiddenInTrigger
+case class ScalGeCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainBinExp(ScalGeOp) with ForbiddenInTrigger
 
 
 // --- Function application (domain and normal)
