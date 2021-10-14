@@ -136,10 +136,10 @@ domain _Perm {
         geq(share(_a), share(_b)) ==> minus(share(_a), share(_b)) == share(_a - _b)
     }
     axiom axCanJoin { forall _a: Rational, _b: Rational :: { joinable(share(_a), share(_b)) }
-        joinable(share(_a), share(_b)) <==> valid_share(_a) && valid_share(_b) && valid_share(_a + _b)
+        valid_share(_a) && valid_share(_b) ==> (joinable(share(_a), share(_b)) == valid_share(_a + _b))
     }
     axiom axGeq { forall _a: Rational, _b: Rational :: { geq(share(_a), share(_b)) }
-        geq(share(_a), share(_b)) <==> valid_share(_a) && valid_share(_b) && valid_share(_a - _b)
+        valid_share(_a) && valid_share(_b) ==> (geq(share(_a), share(_b)) <==> valid_share(_a - _b))
     }
     axiom axMul { forall _a: Rational, _b: Rational :: {times(share(_a), share(_b))} times(share(_a), share(_b)) == share(_a * _b)}
 
@@ -166,7 +166,7 @@ domain _Perm {
     axiom axMinusUneq { forall _p: Perm, _q: Perm :: {geq(_p, _q)} geq(_p, _q) && _p != _q ==> minus(_p, _q) != unit()}
 
     axiom axPositive {forall _p: Perm, _q: Perm :: {plus(_p, _q)} plus(_p, _q) == unit() ==> _p == unit() && _q == unit()}
-    axiom axPlusGeq {forall _p: Perm, _q: Perm :: {geq(plus(_p, _q), _p)} joinable(_p, _q) ==> geq(plus(_p, _q), _p)}
+    axiom axPlusGeq {forall _p: Perm, _q: Perm :: {geq(plus(_p, _q), _p)} /*joinable(_p, _q) ==>*/ geq(plus(_p, _q), _p)}
     axiom axMinusCancel {forall _p: Perm, _q: Perm :: {minus(plus(_p, _q), _q)} minus(plus(_p, _q), _q) == _p}
 
 }

@@ -57,6 +57,8 @@ case object Int extends AtomicType
 case object Bool extends AtomicType
 /** Type for Rationals */
 case object Rational extends AtomicType
+/** Type for Scalars */
+case object Scalar extends AtomicType
 /** Type for permissions. */
 case object Perm extends AtomicType
 /** Type for references. */

@@ -575,6 +575,7 @@ case class Translator(program: PProgram) {
       case "Ref" => Ref
       case "Perm" => Perm
       case "Rational" => Rational
+      case "Scalar" => Scalar
     }
     case PSeqType(elemType) =>
       SeqType(ttyp(elemType))

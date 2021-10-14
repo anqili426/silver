@@ -280,7 +280,7 @@ case class FieldAccessPredicate(loc: FieldAccess, perm: Exp)(val pos: Position =
 /** An accessibility predicate for a predicate location. */
 case class PredicateAccessPredicate(loc: PredicateAccess, perm: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AccessPredicate {
   override lazy val check : Seq[ConsistencyError] =
-    if(!(perm isSubtype Perm)) Seq(ConsistencyError(s"Permission amount parameter of access predicate must be of Perm type, but found ${perm.typ}", perm.pos)) else Seq()
+    if(!(perm isSubtype Scalar)) Seq(ConsistencyError(s"Permission amount parameter of access predicate must be of Scalar type, but found ${perm.typ}", perm.pos)) else Seq()
   val typ: Bool.type = Bool
 }
 
@@ -308,6 +308,8 @@ sealed trait PermExp extends Exp {
 sealed trait RatioExp extends Exp {
   override lazy val typ = Rational
 }
+
+
 
 /** A wild card permission. Has an unknown value, but there are no guarantees that it will be the same inside one method. */
 case class WildcardPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends PermExp

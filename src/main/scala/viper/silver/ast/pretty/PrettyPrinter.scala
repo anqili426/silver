@@ -616,6 +616,7 @@ object FastPrettyPrinter extends FastPrettyPrinterBase with BracketPrettyPrinter
       case Ref => "Ref"
       case Perm => "Perm"
       case Rational => "Rational"
+      case Scalar => "Scalar"
       case InternalType => "InternalType"
       case Wand => "$WandType"
       case SeqType(elemType) => text("Seq") <> brackets(show(elemType))

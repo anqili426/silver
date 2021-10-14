@@ -721,7 +721,7 @@ object FastParser {
 
   lazy val keywords = Set("result",
     // types
-    "Int", "Perm", "Bool", "Ref", "Rational",
+    "Int", "Perm", "Bool", "Ref", "Rational", "Scalar",
     // boolean constants
     "true", "false",
     // null
@@ -982,7 +982,7 @@ object FastParser {
   }
 
   def primitiveTyp[_: P]: P[PType] = P(FP(keyword("Rational")).map{ case (pos, _) => PPrimitiv("Rational")(pos)}
-    | FP((StringIn("Int", "Bool", "Perm", "Ref") ~~ !identContinues).!).map{ case (pos, name) => PPrimitiv(name)(pos)})
+    | FP((StringIn("Int", "Bool", "Perm", "Ref", "Scalar") ~~ !identContinues).!).map{ case (pos, name) => PPrimitiv(name)(pos)})
 /* Maps:
   lazy val primitiveTyp: P[PType] = P(keyword("Rational").map(_ => PPrimitiv("Perm"))
     | (StringIn("Int", "Bool", "Perm", "Ref") ~~ !identContinues).!.map(PPrimitiv))

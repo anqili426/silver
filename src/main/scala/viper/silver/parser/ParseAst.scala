@@ -137,6 +137,7 @@ object TypeHelper {
   val Perm = PPrimitiv("Perm")((NoPosition, NoPosition))
   val Ref = PPrimitiv("Ref")((NoPosition, NoPosition))
   val Ratio = PPrimitiv("Rational")((NoPosition, NoPosition))
+  val Scalar = PPrimitiv("Scalar")((NoPosition, NoPosition))
   val Pred = PPredicateType()((NoPosition, NoPosition))
   val Wand = PWandType()((NoPosition, NoPosition))
 }
@@ -539,23 +540,20 @@ class PBinExp(val left: PExp, val opName: String, val right: PExp)(val pos: (Pos
     case "+" | "-" => List(
       Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Ratio),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
-      Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int)
+      Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int),
+      Map(POpApp.pArgS(0) -> Scalar, POpApp.pArgS(1) -> Scalar, POpApp.pResS -> Scalar)
     )
     case "*" => List(
       Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Ratio),
-      Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
-      Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
-      Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
-      Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Int, POpApp.pResS -> Perm),
+      Map(POpApp.pArgS(0) -> Scalar, POpApp.pArgS(1) -> Scalar, POpApp.pResS -> Scalar),
+      Map(POpApp.pArgS(0) -> Scalar, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int)
     )
     case "/" => List(
       Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Ratio),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Ratio),
       Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Int, POpApp.pResS -> Ratio),
-      Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Perm),
-      Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Int, POpApp.pResS -> Perm),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Int)
     )
     case "\\" | "%" => List(
@@ -563,6 +561,7 @@ class PBinExp(val left: PExp, val opName: String, val right: PExp)(val pos: (Pos
     case "<" | "<=" | ">" | ">=" => List(
       Map(POpApp.pArgS(0) -> Ratio, POpApp.pArgS(1) -> Ratio, POpApp.pResS -> Bool),
       Map(POpApp.pArgS(0) -> Perm, POpApp.pArgS(1) -> Perm, POpApp.pResS -> Bool),
+      Map(POpApp.pArgS(0) -> Scalar, POpApp.pArgS(1) -> Scalar, POpApp.pResS -> Bool),
       Map(POpApp.pArgS(0) -> Int, POpApp.pArgS(1) -> Int, POpApp.pResS -> Bool)
     )
     case "==" | "!=" => List(
@@ -784,7 +783,7 @@ case class PEpsilon()(val pos: (Position, Position)) extends PSimpleLiteral{typ 
 case class PAccPred(loc: PLocationAccess, perm: PExp)(val pos: (Position, Position)) extends POpApp {
   override val opName = "acc"
   override val signatures : List[PTypeSubstitution] = List(
-    Map(POpApp.pArgS(1) -> Perm,POpApp.pResS -> Bool))
+    Map(POpApp.pArgS(1) -> (if (loc.isInstanceOf[PFieldAccess]) Perm else Scalar),POpApp.pResS -> Bool))
   override val args = Seq(loc,perm)
 }
 
