@@ -778,6 +778,7 @@ case class PCurPerm(res: PResourceAccess)(val pos: (Position, Position)) extends
 
 case class PNoPerm()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
 case class PFullPerm()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
+case class PIdScal()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Scalar}
 case class PWildcard()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
 case class PEpsilon()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
 case class PAccPred(loc: PLocationAccess, perm: PExp)(val pos: (Position, Position)) extends POpApp {
@@ -1268,6 +1269,7 @@ object Nodes {
       case PCurPerm(loc) => Seq(loc)
       case PNoPerm() => Nil
       case PFullPerm() => Nil
+      case PIdScal() => Nil
       case PWildcard() => Nil
       case PEpsilon() => Nil
       case PAccPred(loc, perm) => Seq(loc, perm)

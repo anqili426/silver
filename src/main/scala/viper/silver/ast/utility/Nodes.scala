@@ -89,8 +89,11 @@ object Nodes {
           case ForPerm(v, resource, exp) => v :+ resource :+ exp
           case InhaleExhaleExp(in, ex) => Seq(in, ex)
           case WildcardPerm() => Nil
+          case WildcardScal() => Nil
           case FullPerm() => Nil
+          case IdScal() => Nil
           case NoPerm() => Nil
+          case ZeroScal() => Nil
           case EpsilonPerm() => Nil
           case CurrentPerm(loc) => Seq(loc)
           case FractionalPerm(left, right) => Seq(left, right)

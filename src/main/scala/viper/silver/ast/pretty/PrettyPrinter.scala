@@ -758,7 +758,11 @@ object FastPrettyPrinter extends FastPrettyPrinterBase with BracketPrettyPrinter
       "wildcard"
     case FullPerm() =>
       "write"
+    case IdScal() =>
+      "write"
     case NoPerm() =>
+      "none"
+    case ZeroScal() =>
       "none"
     case EpsilonPerm() =>
       "epsilon"

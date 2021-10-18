@@ -166,3 +166,57 @@ domain _Perm {
     axiom axMinusCancel {forall _p: Perm, _q: Perm :: {minus(plus(_p, _q), _q)} minus(plus(_p, _q), _q) == _p}
 
 }
+
+
+domain _Scalar { //Fractional scalars
+    function zeroS(): Scalar 
+    function oneS(): Scalar
+    function plusS(_x: Scalar, _y: Scalar): Scalar
+    function minusS(_x: Scalar, _y: Scalar): Scalar
+    function geqS(_x: Scalar, _y: Scalar): Bool
+    //function joinable(_x: Perm, _y: Perm): Bool //not needed, joinability depends on perms' joinable predicate
+
+    function timesS(_x: Scalar, _y: Scalar): Scalar
+    function applyS(_x: Scalar, _y: Perm): Perm
+    //Auxiliary functions
+//Integer scalars
+    function stack(_r: Rational) : Scalar
+    axiom axStack0 { stack(0/1) == zeroS()}
+    axiom axStack1 { stack(1/1) == oneS() }
+    axiom axPlusStack { forall _n: Rational, _m: Rational :: {plusS(stack(_n), stack(_m))} _m >= 0/1 ==> _n >= 0/1 ==> plusS(stack(_n), stack(_m)) == stack(_m + _n)}
+    axiom axGeqStack { forall _n: Rational, _m: Rational :: {geqS(stack(_n), stack(_m))} _m >= 0/1 ==> _n >= 0/1 ==> geqS(stack(_n), stack(_m)) <==> _n >= _m}
+    axiom axMinusStack { forall _n: Rational, _m: Rational ::{minusS(stack(_n), stack(_m))} _m >= 0/1 ==> _n >= 0/1 ==> geqS(stack(_n), stack(_m)) ==> minusS(stack(_n), stack(_m)) == stack(_n - _m)}
+    axiom axStackApply { forall _p: Rational, _n: Rational :: {applyS(stack(_n), share(_p))} valid_share(_n * _p) ==> applyS(stack(_n), share(_p)) == share(_n * _p)}
+    axiom axStackTimes { forall _n: Rational, _m: Rational :: {timesS(stack(_n), stack(_m))} _m >= 0/1 ==> _n >= 0/1 ==> timesS(stack(_n), stack(_m)) == stack(_m * _n)}
+
+//PLUS
+    axiom axPlusZero{ forall _s: Scalar :: {plusS(zeroS(),_s)} plusS(zeroS(),_s) == _s}
+    axiom axPlusComm {forall _s: Scalar, _t: Scalar :: {plusS(_s, _t)} plusS(_s, _t) == plusS(_t, _s)}
+
+//APPLY
+//one = identity function, zero = constant unit() function
+    axiom applyZero { forall _p: Perm :: {applyS(zeroS(), _p)} applyS(zeroS(), _p) == unit() }
+    axiom applyOne { forall _p: Perm :: {applyS(oneS(), _p)} applyS(oneS(), _p) == _p }
+
+
+//TIMES
+
+    axiom axTimes0S { forall _s: Scalar :: {timesS(zeroS(), _s)} timesS(zeroS(),_s) == zeroS()}
+    axiom axTimes1S { forall _s: Scalar :: {timesS(oneS(),_s)} timesS(oneS(),_s) == _s}
+    axiom axTimesComm {forall _s: Scalar, _t: Scalar :: {timesS(_s, _t)} timesS(_s, _t) == timesS(_t, _s)}
+
+//GEQ
+    axiom axGeqZero { forall _s: Scalar :: {geqS(_s, zeroS())} geqS(_s, zeroS())}
+//MINUS
+    axiom axMinusZero { forall _s: Scalar :: {geqS(_s, zeroS())} geqS(_s, zeroS())}
+
+    //additional axioms
+    axiom axGeqPlusS { forall _a: Scalar, _x: Scalar, _y: Scalar :: {geqS(_a, plusS(_x, _y))} geqS(_a, plusS(_x, _y)) ==> geqS(_a, _x)}
+    axiom axgeqSMinusS {forall _a: Scalar, _x: Scalar, _y: Scalar :: {geqS(_a, plusS(_x, _y))} geqS(_a, plusS(_x, _y)) ==> geqS(minusS(_a, _y), _x)}
+    axiom axMinusUneqS { forall _p: Scalar, _q: Scalar :: {geqS(_p, _q)} geqS(_p, _q) && _p != _q ==> minusS(_p, _q) != zeroS()}
+
+    axiom axPositiveS {forall _p: Scalar, _q: Scalar :: {plusS(_p, _q)} plusS(_p, _q) == zeroS() ==> _p == zeroS() && _q == zeroS()}
+    axiom axPlusgeqS {forall _p: Scalar, _q: Scalar :: {geqS(plusS(_p, _q), _p)}geqS(plusS(_p, _q), _p)}
+    axiom axMinusCancelS {forall _p: Scalar, _q: Scalar :: {minusS(plusS(_p, _q), _q)} minusS(plusS(_p, _q), _q) == _p}
+
+}

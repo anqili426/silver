@@ -330,7 +330,7 @@ case class FullPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, v
 case class NoPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AbstractConcretePerm(0, 1)
 
 /** The identity scalar (analogous to full permission). */
-case class IdScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AbstractConcretePerm(1, 1)
+case class IdScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends ScalExp
 
 /** Zero scalar (analogous to no permission). */
 case class ZeroScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends ScalExp

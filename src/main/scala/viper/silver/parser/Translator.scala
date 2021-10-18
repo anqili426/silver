@@ -467,6 +467,8 @@ case class Translator(program: PProgram) {
         NoPerm()(pos)
       case PFullPerm() =>
         FullPerm()(pos)
+      case PIdScal() =>
+        IdScal()(pos)
       case PWildcard() =>
         WildcardPerm()(pos)
       case PEpsilon() =>

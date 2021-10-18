@@ -898,8 +898,8 @@ object FastParser {
 
   def accessPredImpl[_: P]: P[PAccPred] = FP(keyword("acc") ~ "(" ~ locAcc ~ ("," ~ exp).? ~ ")").map {
     case (pos, (_, _, loc, perms)) => {
-      PAccPred(loc, perms.getOrElse(PFullPerm()(pos)))(pos)
-    }
+      PAccPred(loc, perms.getOrElse((if (loc.isInstanceOf[PCall]) PIdScal()(pos) else PFullPerm()(pos))))(pos)
+    } //We assume that in acc(f(...)), f is always a predicate
   }
 
   def accessPred[_: P]: P[PAccPred] = accessPredImpl
@@ -1000,7 +1000,7 @@ object FastParser {
     case (pos, (_, _, a, b)) => PUnfolding(a, b)(pos) }
 
   def predicateAccessPred[_: P]: P[PAccPred] = P(accessPred | FP(predAcc).map {
-    case (pos, loc) => PAccPred(loc, PFullPerm()(pos))(pos)
+    case (pos, loc) => PAccPred(loc, if (loc.isInstanceOf[PPredicateAccess]) PIdScal()(pos) else PFullPerm()(pos))(pos)
   })
 
   def setTypedEmpty[_: P]: P[PExp] = collectionTypedEmpty("Set", (a, b) => PEmptySet(a)(b))
