@@ -566,7 +566,7 @@ case class TypeChecker(names: NameAnalyser) {
               issueError(r, "'result' can only be used in function postconditions")
           case _=>
         }
-
+      case PAmbiWildcard() =>
       case poa: POpApp =>
         if (poa.typeSubstitutions.isEmpty) {
           poa.args.foreach(checkInternal)

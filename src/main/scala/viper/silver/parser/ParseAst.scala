@@ -375,6 +375,9 @@ class PTypeSubstitution(val m:Map[String,PType])  //extends Map[String,PType]()
   def contains(key : PDomainType) : Boolean = contains(key.domain.name)
   def contains(key : String) : Boolean = get(key).nonEmpty
 
+  /**
+   * Computes the substitution obtained by applying the substitution a -> b after this substitution
+   */
   def substitute(a:String,b:PType) : PTypeSubstitution = {
     require(!contains(a))
     val ts = PTypeSubstitution(Map(a -> b))
@@ -387,6 +390,19 @@ class PTypeSubstitution(val m:Map[String,PType])  //extends Map[String,PType]()
 
   def add(a:String,b:PType): Option[PTypeSubstitution] = add(PTypeVar(a),b)
 
+  /**
+   * If this maps a and b to the same type, returns this
+   * If this maps a to a free type variable, this must not contain a substitution for that type variable. If that holds,
+   * returns [x -> y[a -> b]] +  [a -> b]
+   * IF this maps b to a free type variable, returns recurses to the above case with a and b switched, i.e. if the side
+   * condition holds, returns [x -> y[b -> a]] + [b -> a]
+   * If a and b are mapped to generic types with the same name, recursively call add on their type Arguments pairwise. If any
+   * intermediate add is None, return None.
+   * Otherwise return None
+   * @param a
+   * @param b
+   * @return
+   */
   def add(a:PType,b:PType): Option[PTypeSubstitution] = {
     val as = a.substitute(this)
     val bs = b.substitute(this)
@@ -780,6 +796,15 @@ case class PNoPerm()(val pos: (Position, Position)) extends PSimpleLiteral{typ =
 case class PFullPerm()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
 case class PIdScal()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Scalar}
 case class PWildcard()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
+case class PAmbiWildcard()(val pos: (Position, Position)) extends PExp { //ambiguous wildcard which will become either perm or scalar typed
+  private def me = "awildcard"
+  override def typeSubstitutions: collection.Seq[PTypeSubstitution] = List(Map(me -> Perm), Map(me -> Scalar))
+
+  override def forceSubstitution(ts: PTypeSubstitution): Unit = {
+    typ = typ.substitute(ts)
+    assert(typ.isGround)
+  }
+}
 case class PEpsilon()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
 case class PAccPred(loc: PLocationAccess, perm: PExp)(val pos: (Position, Position)) extends POpApp {
   override val opName = "acc"
@@ -1271,6 +1296,7 @@ object Nodes {
       case PFullPerm() => Nil
       case PIdScal() => Nil
       case PWildcard() => Nil
+      case PAmbiWildcard() => Nil
       case PEpsilon() => Nil
       case PAccPred(loc, perm) => Seq(loc, perm)
       case PEmptySeq(_) => Nil
