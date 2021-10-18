@@ -32,7 +32,7 @@ method Ref__do_incr_loop(diz: Ref, n: Int, k: Int, h: Ref)
   requires k >= 0
   //requires acc(diz.Ref__y, write)
   requires h != null
-  requires acc(Ref__hist_idle(h, diz, p_single(k)), write)
+  requires acc(Ref__hist_idle(h, diz, p_single(k)))
 {
   var i: Int
   i := 0
@@ -42,7 +42,7 @@ method Ref__do_incr_loop(diz: Ref, n: Int, k: Int, h: Ref)
     invariant i <= n
     //invariant acc(diz.Ref__y, write)
     invariant h != null
-    invariant acc(Ref__hist_idle(h, diz, p_single(k + i)), write)
+    invariant acc(Ref__hist_idle(h, diz, p_single(k + i)))
   {
     //:: ExpectedOutput(assert.failed:assertion.false)
     assert false

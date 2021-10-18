@@ -36,9 +36,9 @@
     assert ((this) != (this.next.next))
   }
   method testNestingUnfolding(this: Ref)
-    requires acc(valid(this), write)
+    requires acc(valid(this))
   {
-    assert ((this) != ((unfolding acc(valid(this), write) in this.next)))
+    assert ((this) != ((unfolding acc(valid(this)) in this.next)))
     if ((((unfolding acc(valid(this), wildcard) in this.next)) != (null))) {
       assert (((unfolding acc(valid(this), wildcard) in this.next)) != ((unfolding acc(valid(this), wildcard) in (unfolding acc(valid(this.next), wildcard) in this.next.next))))
       assert ((this) != ((unfolding acc(valid(this), wildcard) in (unfolding acc(valid(this.next), wildcard) in this.next.next))))

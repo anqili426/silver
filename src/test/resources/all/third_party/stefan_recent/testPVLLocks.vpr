@@ -107,7 +107,7 @@ method Worker__forkOperator(diz: Ref, current_thread_id: Int)
   requires diz.Worker__q1 != null
   requires acc(diz.Worker__q2, wildcard)
   requires diz.Worker__q2 != null
-  ensures acc(Worker__joinToken(diz), write)
+  ensures acc(Worker__joinToken(diz))
 {
   inhale false
 }
@@ -115,7 +115,7 @@ method Worker__forkOperator(diz: Ref, current_thread_id: Int)
 method Worker__joinOperator(diz: Ref, current_thread_id: Int)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__joinToken(diz), write)
+  requires acc(Worker__joinToken(diz))
 {
   inhale false
 }
@@ -163,8 +163,8 @@ method Queue__Queue(current_thread_id: Int) returns (sys__result: Ref)
   __flatten_18 := false
   __flatten_40 := __flatten_18
   diz.Queue__used := __flatten_40
-  fold acc(Queue__lock_invariant(diz), write)
-  exhale acc(Queue__lock_invariant(diz), write)
+  fold acc(Queue__lock_invariant(diz))
+  exhale acc(Queue__lock_invariant(diz))
   sys__result := diz
   assert sys__result != null
   inhale false
@@ -178,19 +178,19 @@ method Queue__put(diz: Ref, current_thread_id: Int, x: Int)
   var __flatten_20: Int
   var __flatten_41: Bool
   var __flatten_42: Int
-  inhale acc(Queue__lock_invariant(diz), write)
-  unfold acc(Queue__lock_invariant(diz), write)
-  inhale acc(Queue__lock_held(diz), write)
+  inhale acc(Queue__lock_invariant(diz))
+  unfold acc(Queue__lock_invariant(diz))
+  inhale acc(Queue__lock_held(diz))
   while (diz.Queue__used)
     invariant acc(diz.Queue__used, write)
     invariant acc(diz.Queue__data, write)
-    invariant acc(Queue__lock_held(diz), write) 
+    invariant acc(Queue__lock_held(diz)) 
   {
-    fold acc(Queue__lock_invariant(diz), write)
-    exhale acc(Queue__lock_invariant(diz), write)
-    assert acc(Queue__lock_held(diz), write)
-    inhale acc(Queue__lock_invariant(diz), write)
-    unfold acc(Queue__lock_invariant(diz), write)
+    fold acc(Queue__lock_invariant(diz))
+    exhale acc(Queue__lock_invariant(diz))
+    assert acc(Queue__lock_held(diz))
+    inhale acc(Queue__lock_invariant(diz))
+    unfold acc(Queue__lock_invariant(diz))
   }
   __flatten_19 := true
   __flatten_41 := __flatten_19
@@ -198,10 +198,10 @@ method Queue__put(diz: Ref, current_thread_id: Int, x: Int)
   __flatten_20 := x
   __flatten_42 := __flatten_20
   diz.Queue__data := __flatten_42
-  assert acc(Queue__lock_held(diz), write)
-  exhale acc(Queue__lock_held(diz), write)
-  fold acc(Queue__lock_invariant(diz), write)
-  exhale acc(Queue__lock_invariant(diz), write)
+  assert acc(Queue__lock_held(diz))
+  exhale acc(Queue__lock_held(diz))
+  fold acc(Queue__lock_invariant(diz))
+  exhale acc(Queue__lock_invariant(diz))
 }
 
 method Queue__take(diz: Ref, current_thread_id: Int) returns (sys__result: Int)
@@ -212,28 +212,28 @@ method Queue__take(diz: Ref, current_thread_id: Int) returns (sys__result: Int)
   var __flatten_21: Bool
   var __flatten_22: Int
   var __flatten_43: Bool
-  inhale acc(Queue__lock_invariant(diz), write)
-  unfold acc(Queue__lock_invariant(diz), write)
-  inhale acc(Queue__lock_held(diz), write)
+  inhale acc(Queue__lock_invariant(diz))
+  unfold acc(Queue__lock_invariant(diz))
+  inhale acc(Queue__lock_held(diz))
   while (!diz.Queue__used)
     invariant acc(diz.Queue__used, write)
     invariant acc(diz.Queue__data, write)
-    invariant acc(Queue__lock_held(diz), write) 
+    invariant acc(Queue__lock_held(diz)) 
   {
-    fold acc(Queue__lock_invariant(diz), write)
-    exhale acc(Queue__lock_invariant(diz), write)
-    assert acc(Queue__lock_held(diz), write)
-    inhale acc(Queue__lock_invariant(diz), write)
-    unfold acc(Queue__lock_invariant(diz), write)
+    fold acc(Queue__lock_invariant(diz))
+    exhale acc(Queue__lock_invariant(diz))
+    assert acc(Queue__lock_held(diz))
+    inhale acc(Queue__lock_invariant(diz))
+    unfold acc(Queue__lock_invariant(diz))
   }
   res := diz.Queue__data
   __flatten_21 := false
   __flatten_43 := __flatten_21
   diz.Queue__used := __flatten_43
-  assert acc(Queue__lock_held(diz), write)
-  exhale acc(Queue__lock_held(diz), write)
-  fold acc(Queue__lock_invariant(diz), write)
-  exhale acc(Queue__lock_invariant(diz), write)
+  assert acc(Queue__lock_held(diz))
+  exhale acc(Queue__lock_held(diz))
+  fold acc(Queue__lock_invariant(diz))
+  exhale acc(Queue__lock_invariant(diz))
   __flatten_22 := res
   sys__result := __flatten_22
   assert true

@@ -9,8 +9,8 @@ predicate valid(self: Ref) {
 }
 
 method read(a: Ref)
-    requires acc(valid(a), write)
-    ensures acc(valid(a), write)
+    requires acc(valid(a))
+    ensures acc(valid(a))
 {
     assert perm(a.f) == none /* OK - perm(e.f) does not require e != null */
 }

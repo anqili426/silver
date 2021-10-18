@@ -20,7 +20,7 @@ method main(xs: Seq[Ref], ys: Seq[Ref]) {
     (forall x:Ref :: x in xs ==> acc(x.g))) &&
     (forall x:Ref :: x in xs ==> acc(pred(x)))) &&
     (forall x:Ref :: x in xs ==> x.f > 0))
-  assert (forall x: Ref :: true && (x in xs) ==> acc(x.f, write)) && (forall x: Ref :: true && (x in ys) ==> acc(p(x), write))
+  assert (forall x: Ref :: true && (x in xs) ==> acc(x.f)) && (forall x: Ref :: true && (x in ys) ==> acc(p(x)))
   assert ((forall x:Ref :: (true && x in xs) ==> acc(x.f)) && (forall x:Ref :: (true && x in xs) ==> x.f == 5)) && (forall x : Ref :: true && x in ys ==> acc(p(x)))
 }
 //APPENDED PERMISSION MODEL

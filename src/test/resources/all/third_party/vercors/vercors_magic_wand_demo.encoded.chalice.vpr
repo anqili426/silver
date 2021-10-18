@@ -105,17 +105,17 @@ method Wand_readonly_for_writeonlyapply$(this$_3: Ref, k$: Perm)
   requires this$_3 != null
   requires k$ > none
   requires write > k$
-  requires acc(Wand_readonly_for_writeonlyvalid_wand$(this$_3), write)
+  requires acc(Wand_readonly_for_writeonlyvalid_wand$(this$_3))
   requires Wand_readonly_for_writeonlyget_in_1$(this$_3) != null
-  requires acc(WandDemoreadonly$(Wand_readonly_for_writeonlyget_in_1$(this$_3)), write)
+  requires acc(WandDemoreadonly$(Wand_readonly_for_writeonlyget_in_1$(this$_3)))
   requires Wand_readonly_for_writeonlyget_out_1$(this$_3) != null
-  ensures acc(WandDemowriteonly$(old(Wand_readonly_for_writeonlyget_out_1$(this$_3))), write)
+  ensures acc(WandDemowriteonly$(old(Wand_readonly_for_writeonlyget_out_1$(this$_3))))
 {
   var n$: Ref
-  unfold acc(Wand_readonly_for_writeonlyvalid_wand$(this$_3), write)
+  unfold acc(Wand_readonly_for_writeonlyvalid_wand$(this$_3))
   if (this$_3.Wand_readonly_for_writeonlylemma$ == 1) {
-    unfold acc(WandDemoreadonly$(this$_3.Wand_readonly_for_writeonlythis_1$), write)
-    fold acc(WandDemowriteonly$(this$_3.Wand_readonly_for_writeonlythis_1$), write)
+    unfold acc(WandDemoreadonly$(this$_3.Wand_readonly_for_writeonlythis_1$))
+    fold acc(WandDemowriteonly$(this$_3.Wand_readonly_for_writeonlythis_1$))
   }
 }
 
@@ -145,10 +145,10 @@ method WandDemoWandDemo_init$(this$_10: Ref, k$_2: Perm)
   requires k$_2 > none
   requires write > k$_2
   requires acc(this$_10.WandDemox$, 100 / 100)
-  ensures acc(WandDemowriteonly$(this$_10), write)
+  ensures acc(WandDemowriteonly$(this$_10))
 {
   var n$_2: Ref
-  fold acc(WandDemowriteonly$(this$_10), write)
+  fold acc(WandDemowriteonly$(this$_10))
 }
 
 //APPENDED PERMISSION MODEL

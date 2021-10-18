@@ -39,8 +39,8 @@ field ofs: Ref
 
 predicate SP_State(self: Ref) {
   acc(self.ofs, write) &&
-  acc(OFL_State(self.ofs), write) &&
-  (unfolding acc(OFL_State(self.ofs), write) in true)
+  acc(OFL_State(self.ofs)) &&
+  (unfolding acc(OFL_State(self.ofs)) in true)
 }
 
 predicate OFL_State(self: Ref) {true}

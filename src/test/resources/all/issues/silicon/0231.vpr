@@ -53,7 +53,7 @@ method test04c(this: Ref) {
 method test03a(this: Ref)
 {
   while (true)
-    invariant [acc(P(this), write), true]
+    invariant [acc(P(this)), true]
     invariant [true, (perm(P(this)) > none) ==> acc(P(this))]
     invariant [true, (perm(P(this)) >= write) ==> acc(P(this))] // Previously failed unexpectedly
   {}
@@ -63,7 +63,7 @@ method test03a(this: Ref)
 method test03b(this: Ref)
 {
   while (true)
-    invariant [acc(P(this), write), true]
+    invariant [acc(P(this)), true]
     invariant [true, (perm(P(this)) > none) ==> acc(P(this))]
     invariant [true, (perm(P(this)) >= write) ==> acc(P(this))]
   {

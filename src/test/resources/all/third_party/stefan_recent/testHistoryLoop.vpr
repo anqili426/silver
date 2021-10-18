@@ -79,11 +79,11 @@ method History__incr_begin(diz: Ref, current_thread_id: Int, frac: Perm, proc: P
   requires diz != null
   requires current_thread_id >= 0
   requires frac != none
-  requires acc(History__hist_idle(diz, frac, proc), write)
+  requires acc(History__hist_idle(diz, frac, proc))
   requires acc(diz.History__x_hist_value, write)
   requires acc(diz.History__x_hist_mode, write) && (diz.History__x_hist_mode == 1)
   ensures frac != none
-  ensures acc(History__hist_do_incr(diz, frac, proc), write)
+  ensures acc(History__hist_do_incr(diz, frac, proc))
   ensures acc(diz.History__x_hist_value, write)
   ensures acc(diz.History__x_hist_mode, write) && (diz.History__x_hist_mode == 2)
   ensures diz.History__x_hist_value == old(diz.History__x_hist_value)
@@ -97,13 +97,13 @@ method History__incr_commit(diz: Ref, current_thread_id: Int, frac: Perm, proc: 
   requires diz != null
   requires current_thread_id >= 0
   requires frac != none
-  requires acc(History__hist_do_incr(diz, frac, proc), write)
+  requires acc(History__hist_do_incr(diz, frac, proc))
   requires acc(diz.History__x_hist_act, write)
   requires acc(diz.History__x_hist_value, write)
   requires acc(diz.History__x_hist_mode, write) && (diz.History__x_hist_mode == 2)
   requires diz.History__x_hist_value == diz.History__x_hist_act + 1
   ensures frac != none
-  ensures acc(History__hist_idle(diz, frac, p_seq(proc, p_incr())), write)
+  ensures acc(History__hist_idle(diz, frac, p_seq(proc, p_incr())))
   ensures acc(diz.History__x_hist_value, write)
   ensures acc(diz.History__x_hist_mode, write) && (diz.History__x_hist_mode == 1)
   ensures diz.History__x_hist_value == old(diz.History__x_hist_value)
@@ -145,7 +145,7 @@ method History__begin_hist(diz: Ref, current_thread_id: Int)
   ensures acc(diz.History__x_hist_init, write)
   ensures diz.History__x_hist_value == old(diz.History__x_hist_value)
   ensures diz.History__x_hist_init == old(diz.History__x_hist_value)
-  ensures acc(History__hist_idle(diz, write, p_empty()), write)
+  ensures acc(History__hist_idle(diz, p_empty()))
 {
   inhale false
 }
@@ -153,9 +153,9 @@ method History__begin_hist(diz: Ref, current_thread_id: Int)
 method History__split(diz: Ref, current_thread_id: Int, frac1: Perm, proc1: Process, frac2: Perm, proc2: Process)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(History__hist_idle(diz, frac1 + frac2, p_merge(proc1, proc2)), write)
-  ensures acc(History__hist_idle(diz, frac1, proc1), write)
-  ensures acc(History__hist_idle(diz, frac2, proc2), write)
+  requires acc(History__hist_idle(diz, frac1 + frac2, p_merge(proc1, proc2)))
+  ensures acc(History__hist_idle(diz, frac1, proc1))
+  ensures acc(History__hist_idle(diz, frac2, proc2))
 {
   inhale false
 }
@@ -163,9 +163,9 @@ method History__split(diz: Ref, current_thread_id: Int, frac1: Perm, proc1: Proc
 method History__merge(diz: Ref, current_thread_id: Int, frac1: Perm, proc1: Process, frac2: Perm, proc2: Process)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(History__hist_idle(diz, frac1, proc1), write)
-  requires acc(History__hist_idle(diz, frac2, proc2), write)
-  ensures acc(History__hist_idle(diz, frac1 + frac2, p_merge(proc1, proc2)), write)
+  requires acc(History__hist_idle(diz, frac1, proc1))
+  requires acc(History__hist_idle(diz, frac2, proc2))
+  ensures acc(History__hist_idle(diz, frac1 + frac2, p_merge(proc1, proc2)))
 {
   inhale false
 }
@@ -217,12 +217,12 @@ method Application__do_incr_loop(diz: Ref, current_thread_id: Int, h: Ref, n: In
   requires current_thread_id >= 0
   requires n >= 0
   requires q != none
-  requires acc(History__hist_idle(h, q, p), write)
+  requires acc(History__hist_idle(h, q, p))
   requires acc(h.History__x_hist_value, write)
   requires acc(h.History__x_hist_mode, write) && (h.History__x_hist_mode == 1)
   ensures acc(h.History__x_hist_value, write)
   ensures acc(h.History__x_hist_mode, write) && (h.History__x_hist_mode == 1)
-  ensures acc(History__hist_idle(h, q, p_seq(p, p_single(n))), write)
+  ensures acc(History__hist_idle(h, q, p_seq(p, p_single(n))))
 {
   var if_any_bool: Bool
   var i: Int
@@ -233,7 +233,7 @@ method Application__do_incr_loop(diz: Ref, current_thread_id: Int, h: Ref, n: In
     invariant q != none
     invariant acc(h.History__x_hist_value, write)
     invariant acc(h.History__x_hist_mode, write) && (h.History__x_hist_mode == 1)
-    invariant acc(History__hist_idle(h, q, p_seq(p, p_single(i))), write) 
+    invariant acc(History__hist_idle(h, q, p_seq(p, p_single(i)))) 
   {
     History__incr_begin(h, current_thread_id, q, p_seq(p, p_single(i)))
     History__hist_set_x(h, current_thread_id, h.History__x_hist_value + 1)
@@ -248,12 +248,12 @@ method Application__do_loop_twice(diz: Ref, current_thread_id: Int, h: Ref, m: I
   requires m >= 0
   requires n >= 0
   requires q != none
-  requires acc(History__hist_idle(h, q, p_empty()), write)
+  requires acc(History__hist_idle(h, q, p_empty()))
   requires acc(h.History__x_hist_value, write)
   requires acc(h.History__x_hist_mode, write) && (h.History__x_hist_mode == 1)
   ensures acc(h.History__x_hist_value, write)
   ensures acc(h.History__x_hist_mode, write) && (h.History__x_hist_mode == 1)
-  ensures acc(History__hist_idle(h, q, p_single(m + n)), write)
+  ensures acc(History__hist_idle(h, q, p_single(m + n)))
 {
   var if_any_bool: Bool
   Application__do_incr_loop(diz, current_thread_id, h, m, p_empty(), q)

@@ -5,7 +5,7 @@ field next: Ref
 
 predicate valid(list: Ref) {
 		 acc(list.next, write)
-	&& (list.next != null ==> acc(valid(list.next), write))
+	&& (list.next != null ==> acc(valid(list.next)))
 }
 
 function size(list: Ref): Int

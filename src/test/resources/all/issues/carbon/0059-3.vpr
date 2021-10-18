@@ -8,7 +8,7 @@ predicate P(this: Ref) {
 }
 
 method Testsuccess5(this: Ref)
-  requires acc(P(this), write)
+  requires acc(P(this))
   //:: ExpectedOutput(not.wellformed:insufficient.permission)
   ensures unfolding P(this) in this.x >= this.x
 {

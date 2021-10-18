@@ -14,8 +14,8 @@ function readValid(self:Ref) : Int
 }
 
 method read(a: Ref)
-    requires acc(valid(a), write)
-    ensures acc(valid(a), write)
+    requires acc(valid(a))
+    ensures acc(valid(a))
 {
     assert readValid(a) >= readValid(a)
     assert perm(valid(a)) == write

@@ -23,8 +23,8 @@ method Main$change(this: Ref, m: Ref, n: Int)
   assert m != null
   // Check if we already acquired lock
   assert perm(m.mustReleaseBounded$) + perm(m.mustReleaseUnbounded$) == none
-  inhale acc(Main$MonitorInvariant(m), write)
-  unfold acc(Main$MonitorInvariant(m), write)
+  inhale acc(Main$MonitorInvariant(m))
+  unfold acc(Main$MonitorInvariant(m))
   // Inhaling an unbounded (= fresh) release obligation
   inhale acc(m.mustReleaseUnbounded$, write)
   m.Main$f := n

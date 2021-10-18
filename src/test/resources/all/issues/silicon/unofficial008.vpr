@@ -10,7 +10,7 @@ field idx: Ref
 
 predicate Packet(self: Ref) {
   acc(self.path, write) &&
-  (self.path != null ==> acc(Path(self.path), write)) &&
+  (self.path != null ==> acc(Path(self.path))) &&
   (self.path != null)
 }
 
@@ -19,18 +19,18 @@ predicate Path(self: Ref) {
 }
 
 function get_idx(self: Ref): Ref
-  requires acc(Packet(self), write)
+  requires acc(Packet(self))
   ensures isInt(result)
 {
-  (unfolding acc(Packet(self), write) in get_idx_1(self))
+  (unfolding acc(Packet(self)) in get_idx_1(self))
 }
 
 function get_idx_1(self: Ref): Ref
   requires acc(self.path, write)
-  requires acc(Path(self.path), write)
+  requires acc(Path(self.path))
   ensures isInt(result)
 {
-  (unfolding acc(Path(self.path), write) in self.path.idx)
+  (unfolding acc(Path(self.path)) in self.path.idx)
 }
 //APPENDED PERMISSION MODEL
 

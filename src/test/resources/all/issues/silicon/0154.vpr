@@ -22,11 +22,11 @@ function Nodet2$(this: Ref): Int
 }
 
 predicate Nodevalid$(this: Ref) {
-  acc(this.Nodeval$, write) && acc(this.Nodenext$, write) && ((this.Nodenext$ != null) ==> acc(Nodevalid$(this.Nodenext$), write))
+  acc(this.Nodeval$) && acc(this.Nodenext$) && ((this.Nodenext$ != null) ==> acc(Nodevalid$(this.Nodenext$)))
 }
 
 predicate Nodep$(this: Ref) {
-  acc(Nodep$(this), write)
+  acc(Nodep$(this))
 }
 
 //APPENDED PERMISSION MODEL

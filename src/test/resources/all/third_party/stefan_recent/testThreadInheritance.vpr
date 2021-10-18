@@ -55,7 +55,7 @@ predicate Worker__instance_of_Thread(diz: Ref)
 predicate Worker__joinToken(diz: Ref, p: Perm) 
 
 predicate Worker__joinToken_at_Worker(diz: Ref, p: Perm) {
-  acc(Worker__joinToken_at_Thread(diz, p), write)
+  acc(Worker__joinToken_at_Thread(diz, p))
 }
 
 predicate Worker__preFork(diz: Ref, p: Perm) 
@@ -73,18 +73,18 @@ predicate Worker__postJoin_at_Thread(diz: Ref, p: Perm) {
 }
 
 predicate Worker__preFork_at_Worker(diz: Ref, p: Perm) {
-  p >= none && acc(Worker__preFork_at_Thread(diz, p), write) && (acc(diz.Worker__input, wildcard) && (p != none) && acc(diz.Worker__output, p))
+  p >= none && acc(Worker__preFork_at_Thread(diz, p)) && (acc(diz.Worker__input, wildcard) && (p != none) && acc(diz.Worker__output, p))
 }
 
 predicate Worker__postJoin_at_Worker(diz: Ref, p: Perm) {
-  p >= none && acc(Worker__postJoin_at_Thread(diz, p), write) && (acc(diz.Worker__input, wildcard) && (p != none) && (acc(diz.Worker__output, p) && (diz.Worker__output == diz.Worker__input + 1)))
+  p >= none && acc(Worker__postJoin_at_Thread(diz, p)) && (acc(diz.Worker__input, wildcard) && (p != none) && (acc(diz.Worker__output, p) && (diz.Worker__output == diz.Worker__input + 1)))
 }
 
 method Thread__run(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__preFork(diz, write), write)
-  ensures acc(Thread__postJoin(diz, write), write)
+  requires acc(Thread__preFork(diz))
+  ensures acc(Thread__postJoin(diz))
 {
   inhale false
 }
@@ -92,8 +92,8 @@ method Thread__run(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
 method Thread__start(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__preFork(diz, write), write)
-  ensures acc(Thread__joinToken(diz, write), write)
+  requires acc(Thread__preFork(diz))
+  ensures acc(Thread__joinToken(diz))
 {
   inhale false
 }
@@ -101,8 +101,8 @@ method Thread__start(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref
 method Thread__join(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__joinToken(diz, p), write)
-  ensures acc(Thread__postJoin(diz, p), write)
+  requires acc(Thread__joinToken(diz, p))
+  ensures acc(Thread__postJoin(diz, p))
 {
   inhale false
 }
@@ -110,9 +110,9 @@ method Thread__join(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thr
 method Thread__open_joinToken_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__joinToken(diz, p), write)
-  requires acc(Thread__is_a_Thread(diz), write)
-  ensures acc(Thread__joinToken_at_Thread(diz, p), write)
+  requires acc(Thread__joinToken(diz, p))
+  requires acc(Thread__is_a_Thread(diz))
+  ensures acc(Thread__joinToken_at_Thread(diz, p))
 {
   inhale false
 }
@@ -120,9 +120,9 @@ method Thread__open_joinToken_at_Thread(diz: Ref, current_thread_id: Int, p: Per
 method Thread__open_preFork_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__preFork(diz, p), write)
-  requires acc(Thread__is_a_Thread(diz), write)
-  ensures acc(Thread__preFork_at_Thread(diz, p), write)
+  requires acc(Thread__preFork(diz, p))
+  requires acc(Thread__is_a_Thread(diz))
+  ensures acc(Thread__preFork_at_Thread(diz, p))
 {
   inhale false
 }
@@ -130,9 +130,9 @@ method Thread__open_preFork_at_Thread(diz: Ref, current_thread_id: Int, p: Perm)
 method Thread__open_postJoin_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__postJoin(diz, p), write)
-  requires acc(Thread__is_a_Thread(diz), write)
-  ensures acc(Thread__postJoin_at_Thread(diz, p), write)
+  requires acc(Thread__postJoin(diz, p))
+  requires acc(Thread__is_a_Thread(diz))
+  ensures acc(Thread__postJoin_at_Thread(diz, p))
 {
   inhale false
 }
@@ -141,7 +141,7 @@ method Thread__Thread(current_thread_id: Int) returns (sys__thrown: Ref, sys__re
   requires current_thread_id >= 0
   ensures sys__result != null
   ensures type_of(sys__result) == class_Thread()
-  ensures acc(Thread__is_a_Thread(sys__result), write)
+  ensures acc(Thread__is_a_Thread(sys__result))
 {
   inhale false
 }
@@ -163,8 +163,8 @@ method Thread__Thread_at_Thread(current_thread_id: Int) returns (sys__thrown: Re
 method Thread__run_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__preFork_at_Thread(diz, write), write)
-  ensures acc(Thread__postJoin_at_Thread(diz, write), write)
+  requires acc(Thread__preFork_at_Thread(diz))
+  ensures acc(Thread__postJoin_at_Thread(diz))
 {
   inhale false
 }
@@ -172,8 +172,8 @@ method Thread__run_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__thr
 method Thread__start_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__preFork(diz, write), write)
-  ensures acc(Thread__joinToken(diz, write), write)
+  requires acc(Thread__preFork(diz))
+  ensures acc(Thread__joinToken(diz))
 {
   inhale false
 }
@@ -181,8 +181,8 @@ method Thread__start_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__t
 method Thread__join_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Thread__joinToken(diz, p), write)
-  ensures acc(Thread__postJoin(diz, p), write)
+  requires acc(Thread__joinToken(diz, p))
+  ensures acc(Thread__postJoin(diz, p))
 {
   inhale false
 }
@@ -190,8 +190,8 @@ method Thread__join_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns
 method Worker__run(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork(diz, write), write)
-  ensures acc(Worker__postJoin(diz, write), write)
+  requires acc(Worker__preFork(diz))
+  ensures acc(Worker__postJoin(diz))
 {
   inhale false
 }
@@ -199,8 +199,8 @@ method Worker__run(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
 method Worker__start(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork(diz, write), write)
-  ensures acc(Worker__joinToken(diz, write), write)
+  requires acc(Worker__preFork(diz))
+  ensures acc(Worker__joinToken(diz))
 {
   inhale false
 }
@@ -208,8 +208,8 @@ method Worker__start(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref
 method Worker__join(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__joinToken(diz, p), write)
-  ensures acc(Worker__postJoin(diz, p), write)
+  requires acc(Worker__joinToken(diz, p))
+  ensures acc(Worker__postJoin(diz, p))
 {
   inhale false
 }
@@ -217,9 +217,9 @@ method Worker__join(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thr
 method Worker__open_joinToken_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__joinToken(diz, p), write)
-  requires acc(Worker__is_a_Thread(diz), write)
-  ensures acc(Worker__joinToken_at_Thread(diz, p), write)
+  requires acc(Worker__joinToken(diz, p))
+  requires acc(Worker__is_a_Thread(diz))
+  ensures acc(Worker__joinToken_at_Thread(diz, p))
 {
   inhale false
 }
@@ -227,9 +227,9 @@ method Worker__open_joinToken_at_Thread(diz: Ref, current_thread_id: Int, p: Per
 method Worker__open_preFork_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork(diz, p), write)
-  requires acc(Worker__is_a_Thread(diz), write)
-  ensures acc(Worker__preFork_at_Thread(diz, p), write)
+  requires acc(Worker__preFork(diz, p))
+  requires acc(Worker__is_a_Thread(diz))
+  ensures acc(Worker__preFork_at_Thread(diz, p))
 {
   inhale false
 }
@@ -237,9 +237,9 @@ method Worker__open_preFork_at_Thread(diz: Ref, current_thread_id: Int, p: Perm)
 method Worker__open_postJoin_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__postJoin(diz, p), write)
-  requires acc(Worker__is_a_Thread(diz), write)
-  ensures acc(Worker__postJoin_at_Thread(diz, p), write)
+  requires acc(Worker__postJoin(diz, p))
+  requires acc(Worker__is_a_Thread(diz))
+  ensures acc(Worker__postJoin_at_Thread(diz, p))
 {
   inhale false
 }
@@ -248,7 +248,7 @@ method Worker__Thread(current_thread_id: Int) returns (sys__thrown: Ref, sys__re
   requires current_thread_id >= 0
   ensures sys__result != null
   ensures type_of(sys__result) == class_Thread()
-  ensures acc(Worker__is_a_Thread(sys__result), write)
+  ensures acc(Worker__is_a_Thread(sys__result))
 {
   inhale false
 }
@@ -264,8 +264,8 @@ method Worker__Thread_at_Thread(current_thread_id: Int) returns (sys__thrown: Re
 method Worker__run_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork_at_Thread(diz, write), write)
-  ensures acc(Worker__postJoin_at_Thread(diz, write), write)
+  requires acc(Worker__preFork_at_Thread(diz))
+  ensures acc(Worker__postJoin_at_Thread(diz))
 {
   inhale false
 }
@@ -273,8 +273,8 @@ method Worker__run_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__thr
 method Worker__start_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork(diz, write), write)
-  ensures acc(Worker__joinToken(diz, write), write)
+  requires acc(Worker__preFork(diz))
+  ensures acc(Worker__joinToken(diz))
 {
   inhale false
 }
@@ -282,8 +282,8 @@ method Worker__start_at_Thread(diz: Ref, current_thread_id: Int) returns (sys__t
 method Worker__join_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__joinToken(diz, p), write)
-  ensures acc(Worker__postJoin(diz, p), write)
+  requires acc(Worker__joinToken(diz, p))
+  ensures acc(Worker__postJoin(diz, p))
 {
   inhale false
 }
@@ -291,9 +291,9 @@ method Worker__join_at_Thread(diz: Ref, current_thread_id: Int, p: Perm) returns
 method Worker__open_preFork_at_Worker(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork(diz, p), write)
-  requires acc(Worker__is_a_Worker(diz), write)
-  ensures acc(Worker__preFork_at_Worker(diz, p), write)
+  requires acc(Worker__preFork(diz, p))
+  requires acc(Worker__is_a_Worker(diz))
+  ensures acc(Worker__preFork_at_Worker(diz, p))
 {
   inhale false
 }
@@ -301,9 +301,9 @@ method Worker__open_preFork_at_Worker(diz: Ref, current_thread_id: Int, p: Perm)
 method Worker__open_postJoin_at_Worker(diz: Ref, current_thread_id: Int, p: Perm) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__postJoin(diz, p), write)
-  requires acc(Worker__is_a_Worker(diz), write)
-  ensures acc(Worker__postJoin_at_Worker(diz, p), write)
+  requires acc(Worker__postJoin(diz, p))
+  requires acc(Worker__is_a_Worker(diz))
+  ensures acc(Worker__postJoin_at_Worker(diz, p))
 {
   inhale false
 }
@@ -312,10 +312,10 @@ method Worker__Worker(current_thread_id: Int, input: Int) returns (sys__thrown: 
   requires current_thread_id >= 0
   ensures sys__result != null
   ensures type_of(sys__result) == class_Worker()
-  ensures acc(Worker__preFork(sys__result, write), write)
+  ensures acc(Worker__preFork(sys__result))
   ensures acc(sys__result.Worker__input, wildcard)
   ensures sys__result.Worker__input == input
-  ensures acc(Worker__is_a_Worker(sys__result), write)
+  ensures acc(Worker__is_a_Worker(sys__result))
 {
   inhale false
 }
@@ -324,7 +324,7 @@ method Worker__Worker_at_Worker(current_thread_id: Int, input: Int) returns (sys
   requires current_thread_id >= 0
   ensures sys__result != null
   ensures type_of(sys__result) == class_Worker()
-  ensures acc(Worker__preFork_at_Worker(sys__result, write), write)
+  ensures acc(Worker__preFork_at_Worker(sys__result))
   ensures acc(sys__result.Worker__input, wildcard)
   ensures sys__result.Worker__input == input
 {
@@ -336,27 +336,27 @@ method Worker__Worker_at_Worker(current_thread_id: Int, input: Int) returns (sys
   __flatten_3 := input
   __flatten_11 := __flatten_3
   diz.Worker__input := __flatten_11
-  fold acc(Worker__preFork_at_Thread(diz, write), write)
-  fold acc(Worker__preFork_at_Worker(diz, write), write)
+  fold acc(Worker__preFork_at_Thread(diz))
+  fold acc(Worker__preFork_at_Worker(diz))
   sys__result := diz
-  assert (sys__result != null) && (type_of(sys__result) == class_Worker()) && acc(Worker__preFork_at_Worker(sys__result, write), write) && acc(sys__result.Worker__input, wildcard) && (sys__result.Worker__input == input)
+  assert (sys__result != null) && (type_of(sys__result) == class_Worker()) && acc(Worker__preFork_at_Worker(sys__result)) && acc(sys__result.Worker__input, wildcard) && (sys__result.Worker__input == input)
   inhale false
 }
 
 method Worker__run_at_Worker(diz: Ref, current_thread_id: Int) returns (sys__thrown: Ref)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Worker__preFork_at_Worker(diz, write), write)
-  ensures acc(Worker__postJoin_at_Worker(diz, write), write)
+  requires acc(Worker__preFork_at_Worker(diz))
+  ensures acc(Worker__postJoin_at_Worker(diz))
 {
   var __flatten_4: Int
   var __flatten_12: Int
-  unfold acc(Worker__preFork_at_Worker(diz, write), write)
+  unfold acc(Worker__preFork_at_Worker(diz))
   __flatten_4 := diz.Worker__input + 1
   __flatten_12 := __flatten_4
   diz.Worker__output := __flatten_12
-  fold acc(Worker__postJoin_at_Thread(diz, write), write)
-  fold acc(Worker__postJoin_at_Worker(diz, write), write)
+  fold acc(Worker__postJoin_at_Thread(diz))
+  fold acc(Worker__postJoin_at_Worker(diz))
 }
 
 method Main__main(current_thread_id: Int) returns (sys__thrown: Ref)
@@ -371,7 +371,7 @@ method Main__main(current_thread_id: Int) returns (sys__thrown: Ref)
   sys__thrown := Worker__join(w, current_thread_id, write)
   assert w.Worker__input == 7
   sys__thrown := Worker__open_postJoin_at_Worker(w, current_thread_id, write)
-  unfold acc(Worker__postJoin_at_Worker(w, write), write)
+  unfold acc(Worker__postJoin_at_Worker(w))
   assert w.Worker__output == 8
 }
 

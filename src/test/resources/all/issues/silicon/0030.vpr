@@ -11,7 +11,7 @@ predicate C__P(diz: Ref)
 
 method C__main(diz: Ref)
    requires diz != null
-   requires acc(C__P(diz), write)
+   requires acc(C__P(diz))
    //:: UnexpectedOutput(application.precondition:insufficient.permission, /Silicon/issue/30/)
    requires C__g(diz) > 0
 {
@@ -30,7 +30,7 @@ method test(diz:Ref)
 
 method C__main2(diz: Ref)
    requires diz != null
-   requires acc(C__P(diz), write)
+   requires acc(C__P(diz))
    //:: UnexpectedOutput(application.precondition:insufficient.permission, /Silicon/issue/30/)
    requires C__g(diz) > 0
 {

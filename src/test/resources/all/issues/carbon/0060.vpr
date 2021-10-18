@@ -9,12 +9,12 @@ predicate Z(this$_1: Ref) {
 }
 
 predicate ZZ(this$_2: Ref) {
-  acc(Z(this$_2), write)
+  acc(Z(this$_2))
 }
 
 method TestuseZZ$(this: Ref)
   requires this != null
-  requires acc(ZZ(this), write)
+  requires acc(ZZ(this))
 {
   // (ZZ,100)
   assert acc(ZZ(this), 100 / 100)

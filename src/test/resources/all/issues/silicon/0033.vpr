@@ -5,21 +5,21 @@ field next: Ref
 
 predicate valid(this: Ref) {
      acc(this.next, write)
-  && (this.next != null ==> acc(valid(this.next), write))
+  && (this.next != null ==> acc(valid(this.next)))
 }
 
 function size(this: Ref): Int
   requires this != null
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   ensures result >= 1
-{ unfolding acc(valid(this), write) in (this.next == null ? 1 : 1 + size(this.next)) }
+{ unfolding acc(valid(this)) in (this.next == null ? 1 : 1 + size(this.next)) }
 
 method unfoldOnce(this: Ref)
   requires this != null
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   requires size(this) == 1
 {
-  unfold acc(valid(this), write)
+  unfold acc(valid(this))
 
   assert this.next == null
 
@@ -29,46 +29,46 @@ method unfoldOnce(this: Ref)
 
 method unfoldTwice(this: Ref)
   requires this != null
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   requires size(this) == 2
 {
-  unfold acc(valid(this), write)
-  unfold acc(valid(this.next), write)
+  unfold acc(valid(this))
+  unfold acc(valid(this.next))
 
   assert this.next.next == null
 }
 
 method unfoldThrice(this: Ref)
   requires this != null
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   requires size(this) == 3
 {
-  unfold acc(valid(this), write)
-  unfold acc(valid(this.next), write)
-  unfold acc(valid(this.next.next), write)
+  unfold acc(valid(this))
+  unfold acc(valid(this.next))
+  unfold acc(valid(this.next.next))
 
   assert this.next.next.next == null
 }
 
 function size_0(this: Ref): Int
   requires this != null
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   ensures result >= 1
 {
-  unfolding acc(valid(this), write) in (
+  unfolding acc(valid(this)) in (
     this.next == null
       ? 1
-      : unfolding acc(valid(this.next), write) in (this.next.next == null ? 2 : 2 + size_0(this.next.next)))
+      : unfolding acc(valid(this.next)) in (this.next.next == null ? 2 : 2 + size_0(this.next.next)))
 }
 
 method unrollExpression(this: Ref)
   requires this != null
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   requires size_0(this) == 2
 {
   assert
-    unfolding acc(valid(this), write) in
-      unfolding acc(valid(this.next), write) in
+    unfolding acc(valid(this)) in
+      unfolding acc(valid(this.next)) in
         this.next.next == null
 }
 

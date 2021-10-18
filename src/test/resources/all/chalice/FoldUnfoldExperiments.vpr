@@ -9,33 +9,33 @@
   predicate Y(this: Ref) { acc(this.y, write) }
 
   function getX(this: Ref): Int
-    requires acc(X(this), write)
-  { unfolding acc(X(this), write) in this.x }
+    requires acc(X(this))
+  { unfolding acc(X(this)) in this.x }
 
   function getY(this: Ref): Int
-    requires acc(Y(this), write)
-  { unfolding acc(Y(this), write) in this.y }
+    requires acc(Y(this))
+  { unfolding acc(Y(this)) in this.y }
 
   method setX(this: Ref, v: Int)
-    requires acc(X(this), write)
-    ensures acc(X(this), write) && getX(this) == v
+    requires acc(X(this))
+    ensures acc(X(this)) && getX(this) == v
   {
-    unfold acc(X(this), write)
+    unfold acc(X(this))
     this.x := v
-    fold acc(X(this), write)
+    fold acc(X(this))
   }
 
   method check(this: Ref)
     requires acc(this.x, write) && acc(this.y, write)
     ensures acc(this.y, write) && this.y == 2
-    ensures acc(X(this), write) && getX(this) == 3
+    ensures acc(X(this)) && getX(this) == 3
   {
     this.x := 1
     this.y := 2
-    fold acc(X(this), write)
-    fold acc(Y(this), write)
+    fold acc(X(this))
+    fold acc(Y(this))
     setX(this, 3);
-    unfold acc(Y(this), write)
+    unfold acc(Y(this))
   }
 
 //APPENDED PERMISSION MODEL

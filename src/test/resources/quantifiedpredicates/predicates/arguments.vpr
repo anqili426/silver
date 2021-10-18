@@ -18,64 +18,64 @@ predicate valid(this: Ref, b: Bool) {
 method t1_1(this: Ref, xs : Seq[Ref], b: Bool)
     requires this in xs
     requires forall x: Ref :: x in xs ==> acc(x.unrelatedField, write)
-    requires acc(valid(this, b), write)
-    ensures acc(valid(this, b), write)
+    requires acc(valid(this, b))
+    ensures acc(valid(this, b))
 {
-    unfold acc(valid(this, b), write)
+    unfold acc(valid(this, b))
     if (b) {
         this.f := 1
     } else {
         this.g := 2
     }
-    fold acc(valid(this, b), write)
+    fold acc(valid(this, b))
     unrelated(this)
 }
 
 method t1_2(this: Ref, xs : Seq[Ref], b: Bool)
     requires this in xs
     requires forall x: Ref :: x in xs ==> acc(x.unrelatedField, write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, b), write)
-    ensures acc(valid(this, b), write)
+    requires forall x: Ref :: x in xs ==> acc(valid(x, b))
+    ensures acc(valid(this, b))
 {
-    unfold acc(valid(this, b), write)
+    unfold acc(valid(this, b))
     if (b) {
         this.f := 1
     } else {
         this.g := 2
     }
-    fold acc(valid(this, b), write)
+    fold acc(valid(this, b))
     unrelated(this)
 }
 
 method t1_3(this: Ref, xs : Seq[Ref], b: Bool)
     requires this in xs
     requires forall x: Ref :: x in xs ==> acc(x.unrelatedField, write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, b), write)
-    ensures forall x: Ref :: x in xs ==> acc(valid(x, b), write)
+    requires forall x: Ref :: x in xs ==> acc(valid(x, b))
+    ensures forall x: Ref :: x in xs ==> acc(valid(x, b))
 {
-    unfold acc(valid(this, b), write)
+    unfold acc(valid(this, b))
     if (b) {
         this.f := 1
     } else {
         this.g := 2
     }
-    fold acc(valid(this, b), write)
+    fold acc(valid(this, b))
     unrelated(this)
 }
 
 method t1_4(this: Ref, xs : Seq[Ref], b: Bool)
     requires this in xs
     requires acc(this.unrelatedField, write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, b), write)
-    ensures acc(valid(this, b), write)
+    requires forall x: Ref :: x in xs ==> acc(valid(x, b))
+    ensures acc(valid(this, b))
 {
-    unfold acc(valid(this, b), write)
+    unfold acc(valid(this, b))
     if (b) {
         this.f := 1
     } else {
         this.g := 2
     }
-    fold acc(valid(this, b), write)
+    fold acc(valid(this, b))
     unrelated(this)
 }
 
@@ -83,59 +83,59 @@ method t2(x1: Ref, x2:Ref)
     requires acc(x1.unrelatedField, write)
     requires x1 != x2
     requires forall x:Ref :: x in Set(x1, x2) ==> acc(x.f, write)
-    ensures forall x:Ref :: x in Set(x1, x2) ==> acc(valid(x, true), write)
+    ensures forall x:Ref :: x in Set(x1, x2) ==> acc(valid(x, true))
 {
-    fold acc(valid(x1, true), write)
-    fold acc(valid(x2, true), write)
+    fold acc(valid(x1, true))
+    fold acc(valid(x2, true))
     unrelated(x1)
 }
 
 method t2_b(x1: Ref, x2:Ref)
     requires acc(x1.unrelatedField, write)
     requires forall x:Ref :: x in Set(x1, x2) ==> acc(x.f, write)
-    ensures forall x:Ref :: x in Set(x1, x2) ==> acc(valid(x, true), write)
+    ensures forall x:Ref :: x in Set(x1, x2) ==> acc(valid(x, true))
 {
     //:: ExpectedOutput(fold.failed:insufficient.permission)
-    fold acc(valid(x2, false), write)
+    fold acc(valid(x2, false))
 }
 
 method t3_1(this: Ref, xs: Seq[Ref], b: Bool)
     requires this in xs
     requires acc(this.unrelatedField, write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, b), write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, !b), write)
-    requires (unfolding acc(valid(this, false), write) in ((this.g) == 2))
-    ensures acc(valid(this, b), write)
-    ensures acc(valid(this, !b), write)
-    ensures (unfolding acc(valid(this, false), write) in ((this.g) == 2))
+    requires forall x: Ref :: x in xs ==> acc(valid(x, b))
+    requires forall x: Ref :: x in xs ==> acc(valid(x, !b))
+    requires (unfolding acc(valid(this, false)) in ((this.g) == 2))
+    ensures acc(valid(this, b))
+    ensures acc(valid(this, !b))
+    ensures (unfolding acc(valid(this, false)) in ((this.g) == 2))
 {
-    unfold acc(valid(this, true), write)
+    unfold acc(valid(this, true))
     this.f := 1
-    fold acc(valid(this, true), write)
+    fold acc(valid(this, true))
 }
 
 method t3a(this: Ref, xs:Seq[Ref], b: Bool)
     requires this in xs
     requires acc(this.unrelatedField, write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, b), write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, !b), write)
-    requires (unfolding acc(valid(this, false), write) in ((this.g) == 2))
-    ensures acc(valid(this, b), write)
-    ensures acc(valid(this, !b), write)
-    ensures (unfolding acc(valid(this, false), write) in ((this.g) == 2))
+    requires forall x: Ref :: x in xs ==> acc(valid(x, b))
+    requires forall x: Ref :: x in xs ==> acc(valid(x, !b))
+    requires (unfolding acc(valid(this, false)) in ((this.g) == 2))
+    ensures acc(valid(this, b))
+    ensures acc(valid(this, !b))
+    ensures (unfolding acc(valid(this, false)) in ((this.g) == 2))
 {
-    unfold acc(valid(this, true), write)
+    unfold acc(valid(this, true))
     this.f := 1
-    fold acc(valid(this, true), write)
+    fold acc(valid(this, true))
     unrelated(this)
 }
 
 method t3b(this: Ref, xs: Seq[Ref], b: Bool)
     requires this in xs
-    requires forall x: Ref :: x in xs ==> acc(valid(x, b), write)
-    requires forall x: Ref :: x in xs ==> acc(valid(x, !b), write)
+    requires forall x: Ref :: x in xs ==> acc(valid(x, b))
+    requires forall x: Ref :: x in xs ==> acc(valid(x, !b))
 {
-    unfold acc(valid(this, true), write)
+    unfold acc(valid(this, true))
     this.f := 1
     //:: ExpectedOutput(assignment.failed:insufficient.permission)
     this.g := 1

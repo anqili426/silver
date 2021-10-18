@@ -20,7 +20,7 @@ function read$(): Perm
   ensures none < result
 
 predicate P(self: Ref) {
-  acc(self.f$m2, write) && acc(u32(self.f$m2), write) && acc(self.f$m5, write) && acc(u32(self.f$m5), write)
+  acc(self.f$m2) && acc(u32(self.f$m2)) && acc(self.f$m5) && acc(u32(self.f$m5))
 }
 
 predicate u32(self: Ref) {

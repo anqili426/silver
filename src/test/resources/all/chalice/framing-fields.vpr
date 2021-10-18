@@ -3,21 +3,21 @@
 
   field value: Int
   field next: Ref
-  predicate valid(this: Ref) { acc(this.value, write) && acc(this.next, write) && (((this.next) != (null)) ==> acc(valid(this.next), write)) }
+  predicate valid(this: Ref) { acc(this.value) && acc(this.next) && (((this.next) != (null)) ==> acc(valid(this.next))) }
   method set(this: Ref, x: Int, y: Int)
-    requires acc(valid(this), write)
-    ensures acc(valid(this), write)
+    requires acc(valid(this))
+    ensures acc(valid(this))
   {
   }
   method M(this: Ref, x: Ref, y: Ref)
-    requires ((x) != (null)) && ((y) != (null)) && ((x) != (y)) && acc(valid(x), write) && acc(valid(y), write)
+    requires ((x) != (null)) && ((y) != (null)) && ((x) != (y)) && acc(valid(x)) && acc(valid(y))
   {
-    var i: Int := (unfolding acc(valid(x), write) in x.value)
-    var j: Int := (unfolding acc(valid(y), write) in y.value)
+    var i: Int := (unfolding acc(valid(x)) in x.value)
+    var j: Int := (unfolding acc(valid(y)) in y.value)
     set(y, 0, 10);
-    assert (unfolding acc(valid(x), write) in ((i) == (x.value)))
+    assert (unfolding acc(valid(x)) in ((i) == (x.value)))
     //:: ExpectedOutput(assert.failed:assertion.false)
-    assert (unfolding acc(valid(y), write) in ((j) == (y.value)))
+    assert (unfolding acc(valid(y)) in ((j) == (y.value)))
   }
 
 //APPENDED PERMISSION MODEL

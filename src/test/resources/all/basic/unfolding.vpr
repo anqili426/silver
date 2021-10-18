@@ -5,27 +5,27 @@ field f: Int
 field next: Ref
 
 predicate valid(r: Ref) {
-    acc(r.f, write) && acc(r.next, write) && ((r.next != null) ==> (acc(valid(r.next), write)))
+    acc(r.f) && acc(r.next) && ((r.next != null) ==> (acc(valid(r.next))))
 }
 
 method t1(r: Ref)
-    requires acc(valid(r), write)
+    requires acc(valid(r))
 {
-    var i: Int := unfolding acc(valid(r), write) in (r.f)
+    var i: Int := unfolding acc(valid(r)) in (r.f)
 }
 
 method t2(r: Ref)
     requires r != null
 {
     //:: ExpectedOutput(assignment.failed:insufficient.permission)
-    var i: Int := unfolding acc(valid(r), write) in (r.f)
+    var i: Int := unfolding acc(valid(r)) in (r.f)
 }
 
 method t3(r: Ref)
-    requires acc(valid(r), write)
+    requires acc(valid(r))
 {
     //:: ExpectedOutput(assignment.failed:insufficient.permission)
-    var i: Int := (unfolding acc(valid(r), write) in (unfolding acc(valid(r), write) in (r.f)))
+    var i: Int := (unfolding acc(valid(r)) in (unfolding acc(valid(r)) in (r.f)))
 }
 
 
@@ -41,20 +41,20 @@ method t4(r: Ref)
 {
     // note: this fails because the unfolding inside the predicate body is only evaluated in a temporary state - this doesn't grant extra permissions in the unfoldee's state. But perhaps it should.
     //:: ExpectedOutput(assignment.failed:insufficient.permission)
-    var i: Int := unfolding acc(deeper(r), write) in ((r.next == null) ? 0 : r.next.f)
+    var i: Int := unfolding acc(deeper(r)) in ((r.next == null) ? 0 : r.next.f)
 }
 
 method t5(r: Ref)
     requires acc(deeper(r))
 {
-    var i: Int := unfolding acc(deeper(r), write) in ((r.next == null) ? 0 : (unfolding deeper(r.next) in r.next.f))
+    var i: Int := unfolding acc(deeper(r)) in ((r.next == null) ? 0 : (unfolding deeper(r.next) in r.next.f))
 }
 
 method t6(r: Ref)
     requires acc(deeper(r))
 {
     //:: ExpectedOutput(assignment.failed:insufficient.permission)
-    var i: Int := unfolding acc(deeper(r), write) in ((r.next == null) ? 0 : ((r.next.next == null) ? 0 : r.next.next.f))
+    var i: Int := unfolding acc(deeper(r)) in ((r.next == null) ? 0 : ((r.next.next == null) ? 0 : r.next.next.f))
 }
 
 /* This was originally a mistake: it is a version of the "deeper" predicate which

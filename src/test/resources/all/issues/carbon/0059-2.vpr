@@ -9,10 +9,10 @@ predicate P(this: Ref) {
 
 method Testsuccess5(this: Ref)
   requires this != null
-  requires acc(P(this), write)
-  ensures [acc(P(this), write) && (unfolding acc(P(this), write) in this.x == old((unfolding acc(P(this), write) in this.x))), true]
+  requires acc(P(this))
+  ensures [acc(P(this)) && (unfolding acc(P(this)) in this.x == old((unfolding acc(P(this)) in this.x))), true]
 {
-  exhale acc(P(this), write) && (unfolding acc(P(this), write) in this.x == old((unfolding acc(P(this), write) in this.x)))
+  exhale acc(P(this)) && (unfolding acc(P(this)) in this.x == old((unfolding acc(P(this)) in this.x)))
   //:: ExpectedOutput(exhale.failed:assertion.false)
   exhale false
 }

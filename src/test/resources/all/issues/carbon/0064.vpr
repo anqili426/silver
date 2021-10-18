@@ -15,10 +15,10 @@ predicate Nodevalid(this: Ref) {
 
 method Nodeinit(this: Ref, v: Int) returns (k: Perm)
   requires this != null
-  ensures [(acc(Nodevalid(this), write) && (Nodesize(this) == 1)), true]
-  //ensures (acc(Nodevalid(this), write) && (Nodesize(this) == 1))
+  ensures [(acc(Nodevalid(this)) && (Nodesize(this) == 1)), true]
+  //ensures (acc(Nodevalid(this)) && (Nodesize(this) == 1))
 {
-  fold acc(Nodevalid(this), write)
+  fold acc(Nodevalid(this))
 }
 
 //APPENDED PERMISSION MODEL

@@ -10,7 +10,7 @@ function OpaqueFieldList_contents(self: Ref): Seq[Ref]
 function is_int(r: Ref): Bool
 
 function SCIONPath_get_iof(self: Ref): Ref
-  requires acc(SCIONPath_State(self), write)
+  requires acc(SCIONPath_State(self))
 {
   !is_int(null) ? null : (unfolding acc(SCIONPath_State(self), wildcard) in null)
 }
@@ -20,13 +20,13 @@ predicate OpaqueField_State(self: Ref) { true }
 predicate OpaqueFieldList_State(self: Ref) {
   forall x: Ref ::
   { (x in (OpaqueFieldList_contents(self))) }
-  (x in (OpaqueFieldList_contents(self))) ==> acc(OpaqueField_State(x), write)
+  (x in (OpaqueFieldList_contents(self))) ==> acc(OpaqueField_State(x))
 }
 
 predicate SCIONPath_State(self: Ref) {
   acc(self.SCIONPath__ofs, write) &&
-  acc(OpaqueFieldList_State(self.SCIONPath__ofs), write) &&
-  unfolding acc(OpaqueFieldList_State(self.SCIONPath__ofs), write) in true
+  acc(OpaqueFieldList_State(self.SCIONPath__ofs)) &&
+  unfolding acc(OpaqueFieldList_State(self.SCIONPath__ofs)) in true
 }
 
 //APPENDED PERMISSION MODEL

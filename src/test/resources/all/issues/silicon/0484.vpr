@@ -28,13 +28,13 @@ predicate treePerm(current: Ref) {
 }
 
 method insert(current: Ref, bool_val: Bool)
-  requires acc(treePerm(current), write)
+  requires acc(treePerm(current))
   requires bool_val == true
 {
-  unfold acc(treePerm(current), write)
-  fold acc(treePerm(current), write)
+  unfold acc(treePerm(current))
+  fold acc(treePerm(current))
   assert (bool_val == true
-          || (unfolding acc(treePerm(current), write) in true )
+          || (unfolding acc(treePerm(current)) in true )
           )
 }
 

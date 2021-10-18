@@ -9,9 +9,9 @@ predicate Pair(this: Ref) {
 }
 
 function sum(p: Ref): Int
-  requires acc(Pair(p), write)
+  requires acc(Pair(p))
 {
-  unfolding acc(Pair(p), write) in (p.f) + (p.g)
+  unfolding acc(Pair(p)) in (p.f) + (p.g)
 }
 
 //method test06() {
@@ -24,14 +24,14 @@ function sum(p: Ref): Int
 //    //:: ExpectedOutput(wand.not.wellformed)
 //    (acc(p.f, write) && p.f > 0)
 //      --*
-//    folding acc(Pair(p), write) in (sum(p) > 0) // rhs is not self-framing
+//    folding acc(Pair(p)) in (sum(p) > 0) // rhs is not self-framing
 //}
 
 method test00(p: Ref)
   requires acc(Pair(p))
   requires sum(p) > 0
 {
-  package true --* acc(Pair(p), write) && sum(p) > 0
+  package true --* acc(Pair(p)) && sum(p) > 0
 }
 
 //method test01() {
@@ -43,7 +43,7 @@ method test00(p: Ref)
 //  package
 //    (acc(p.f, write) && p.f > 0)
 //      --*
-//    folding acc(Pair(p), write) in (acc(Pair(p), write) && sum(p) > 0)
+//    folding acc(Pair(p)) in (acc(Pair(p)) && sum(p) > 0)
 //
 ////  assert acc(p.f, write)
 ////  //:: ExpectedOutput(assert.failed:insufficient.permission)
@@ -61,7 +61,7 @@ method test00(p: Ref)
 //  package
 //    (acc(p.f, write) && p.f > 0)
 //      --*
-//    folding acc(Pair(p), write) in (acc(Pair(p), write) && sum(p) > 0)
+//    folding acc(Pair(p)) in (acc(Pair(p)) && sum(p) > 0)
 //}
 //
 //method test03() {
@@ -74,17 +74,17 @@ method test00(p: Ref)
 //  package
 //    (acc(p.f, write) && p.f > 0)
 //      --*
-//    folding acc(Pair(p), write) in (acc(Pair(p), write) && sum(p) > 0)
+//    folding acc(Pair(p)) in (acc(Pair(p)) && sum(p) > 0)
 //}
 //
 //method test04(p: Ref)
-//  requires (acc(p.f, write) && p.f > 0) --* (acc(Pair(p), write) && sum(p) > 0)
+//  requires (acc(p.f) && p.f > 0) --* (acc(Pair(p)) && sum(p) > 0)
 //  requires acc(p.f, write)
 //{
 //  p.f := 1
-//  apply (acc(p.f, write) && p.f > 0) --* (acc(Pair(p), write) && sum(p) > 0)
+//  apply (acc(p.f) && p.f > 0) --* (acc(Pair(p)) && sum(p) > 0)
 //
-//  assert acc(Pair(p), write) && sum(p) > 0
+//  assert acc(Pair(p)) && sum(p) > 0
 //  //:: ExpectedOutput(assert.failed:insufficient.permission)
 //  assert acc(p.f, write)
 //}
@@ -98,12 +98,12 @@ method test00(p: Ref)
 //  package
 //    (acc(p.f, write) && p.f > 0)
 //      --*
-//    folding acc(Pair(p), write) in (acc(Pair(p), write) && sum(p) > 0)
+//    folding acc(Pair(p)) in (acc(Pair(p)) && sum(p) > 0)
 //
 //  test04(p)
 //
 //  //:: ExpectedOutput(assert.failed:wand.not.found)
-//  assert (acc(p.f, write) && p.f > 0) --* (acc(Pair(p), write) && sum(p) > 0)
+//  assert (acc(p.f) && p.f > 0) --* (acc(Pair(p)) && sum(p) > 0)
 //}
 
 //APPENDED PERMISSION MODEL

@@ -17,7 +17,7 @@ function tester(r: Ref): Ref
     requires acc(Q(r), wildcard)
 
 function testerFull(r: Ref): Ref
-    requires acc(Q(r), write)
+    requires acc(Q(r))
 
 function testerfield(r: Ref): Ref
     requires acc(r.q, wildcard)
@@ -38,7 +38,7 @@ method pred1(r: Ref)
 }
 
 method pred2(r: Ref)
-    requires acc(P(r), write)
+    requires acc(P(r))
 {
     unfold acc(P(r))
     fold acc(P(r))
@@ -49,7 +49,7 @@ method pred2(r: Ref)
 }
 
 method pred3(r: Ref)
-    requires acc(P(r), write)
+    requires acc(P(r))
 {
     unfold acc(P(r), 1/2)
     fold acc(P(r), 1/2)
@@ -60,7 +60,7 @@ method pred3(r: Ref)
 }
 
 method pred4(r: Ref)
-    requires acc(P2(r), write)
+    requires acc(P2(r))
 {
     unfold acc(P2(r), wildcard)
     fold acc(P2(r), wildcard)
@@ -82,7 +82,7 @@ method func1(r: Ref)
 }
 
 method func2(r: Ref)
-    requires acc(R(r), write)
+    requires acc(R(r))
 {
     unfold acc(R(r))
     fold acc(R(r))
@@ -93,7 +93,7 @@ method func2(r: Ref)
 }
 
 method func3(r: Ref)
-    requires acc(R(r), write)
+    requires acc(R(r))
 {
     unfold acc(R(r), 1/2)
     fold acc(R(r), 1/2)
@@ -104,7 +104,7 @@ method func3(r: Ref)
 }
 
 method func4(r: Ref)
-    requires acc(R2(r), write)
+    requires acc(R2(r))
 {
     unfold acc(R2(r), wildcard)
     fold acc(R2(r), wildcard)

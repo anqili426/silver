@@ -36,7 +36,7 @@ method test(x: Ref)
   x.f.g := 1
   id(x).g := 1
 
-  fold acc(P(x), write)
+  fold acc(P(x))
   fold acc(P(x))
 
   assert id(x).g == unfolding acc(P(x)) in x.g

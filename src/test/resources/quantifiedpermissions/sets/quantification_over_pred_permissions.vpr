@@ -7,16 +7,16 @@ field f: Ref
 predicate inv(this: Ref) { acc(this.f, 1/2) }
 
 method m(S: Set[Ref])
-  requires forall x: Ref :: x in S ==> acc(inv(x), write)
-  ensures forall x1: Ref :: x1 in S ==> acc(inv(x1), write)
+  requires forall x: Ref :: x in S ==> acc(inv(x))
+  ensures forall x1: Ref :: x1 in S ==> acc(inv(x1))
 {
   var b: Ref
   var v: Ref
 
   inhale b in S
-  unfold acc(inv(b), write)
+  unfold acc(inv(b))
   v := b.f
-  fold acc(inv(b), write)
+  fold acc(inv(b))
 }
 
 //APPENDED PERMISSION MODEL

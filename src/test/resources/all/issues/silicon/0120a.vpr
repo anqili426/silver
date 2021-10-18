@@ -43,15 +43,15 @@ predicate Node$MonitorInvariant(this$: Ref) {
 }
 
 predicate Nodelist$(this$_1: Ref) {
-  acc(this$_1.Nodenext$, write) && acc(this$_1.Nodeval$, write) && ((this$_1.Nodenext$ != null) ==> acc(Nodelist$(this$_1.Nodenext$), write))
+  acc(this$_1.Nodenext$) && acc(this$_1.Nodeval$) && ((this$_1.Nodenext$ != null) ==> acc(Nodelist$(this$_1.Nodenext$)))
 }
 
 method Nodereverse_in_place$(this$_4: Ref, k$: Perm) returns (r: Ref)
   requires this$_4 != null
   requires k$ > none
   requires write > k$
-  requires acc(Nodelist$(this$_4), write)
-  ensures (r != null) && acc(Nodelist$(r), write)
+  requires acc(Nodelist$(this$_4))
+  ensures (r != null) && acc(Nodelist$(r))
   ensures Nodevals$(r) == old(Nodereverse_vals$(this$_4))
 {
   var n$: Ref
@@ -63,23 +63,23 @@ method Nodereverse_in_place$(this$_4: Ref, k$: Perm) returns (r: Ref)
   l := this$_4
   r := null
   while (l != null)
-    invariant (l != null) ==> acc(Nodelist$(l), write)
-    invariant (r != null) ==> acc(Nodelist$(r), write)
+    invariant (l != null) ==> acc(Nodelist$(l))
+    invariant (r != null) ==> acc(Nodelist$(r))
     invariant old(Nodereverse_vals$(this$_4)) == (l == null ? Seq[Int]() : Nodereverse_vals$(l)) ++ (r == null ? Seq[Int]() : Nodevals$(r))
   {
     if (r != null) {
-      unfold acc(Nodelist$(r), write)
-      fold acc(Nodelist$(r), write)
+      unfold acc(Nodelist$(r))
+      fold acc(Nodelist$(r))
     }
-    unfold acc(Nodelist$(l), write)
+    unfold acc(Nodelist$(l))
     if (l.Nodenext$ != null) {
-      unfold acc(Nodelist$(l.Nodenext$), write)
-      fold acc(Nodelist$(l.Nodenext$), write)
+      unfold acc(Nodelist$(l.Nodenext$))
+      fold acc(Nodelist$(l.Nodenext$))
     }
     y := l.Nodenext$
     l.Nodenext$ := r
     r := l
-    fold acc(Nodelist$(r), write)
+    fold acc(Nodelist$(r))
     l := y
   }
 }

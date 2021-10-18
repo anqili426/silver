@@ -73,7 +73,7 @@ method Philosopherinit$(this$_1: Ref, k$: Perm, f1: Ref, f2: Ref)
   requires write > k$
   requires (f1 != null) && (f2 != null)
   requires acc(this$_1.Philosopherright$, write) && (acc(this$_1.Philosopherleft$, write) && true)
-  ensures acc(Philosophervalid$(this$_1), write)
+  ensures acc(Philosophervalid$(this$_1))
   ensures (PhilosophergetLeft$(this$_1) == f1) && (PhilosophergetRight$(this$_1) == f2)
 {
   var n$: Ref
@@ -82,14 +82,14 @@ method Philosopherinit$(this$_1: Ref, k$: Perm, f1: Ref, f2: Ref)
   var c$: Ref
   this$_1.Philosopherleft$ := f1
   this$_1.Philosopherright$ := f2
-  fold acc(Philosophervalid$(this$_1), write)
+  fold acc(Philosophervalid$(this$_1))
 }
 
 method Philosopherrun$(this$_2: Ref, k$_1: Perm)
   requires this$_2 != null
   requires k$_1 > none
   requires write > k$_1
-  requires acc(Philosophervalid$(this$_2), write)
+  requires acc(Philosophervalid$(this$_2))
   requires true
   requires true
   requires true
@@ -101,18 +101,18 @@ method Philosopherrun$(this$_2: Ref, k$_1: Perm)
   var b$_1: Ref
   var c$_1: Ref
   while (true)
-    invariant acc(Philosophervalid$(this$_2), write) && true && true && true && true && true
+    invariant acc(Philosophervalid$(this$_2)) && true && true && true && true && true
   {
-    unfold acc(Philosophervalid$(this$_2), write)
-    inhale acc(Fork$MonitorInvariant(this$_2.Philosopherleft$), write)
-    unfold acc(Fork$MonitorInvariant(this$_2.Philosopherleft$), write)
-    inhale acc(Fork$MonitorInvariant(this$_2.Philosopherright$), write)
-    unfold acc(Fork$MonitorInvariant(this$_2.Philosopherright$), write)
-    fold acc(Fork$MonitorInvariant(this$_2.Philosopherleft$), write)
-    exhale acc(Fork$MonitorInvariant(this$_2.Philosopherleft$), write)
-    fold acc(Fork$MonitorInvariant(this$_2.Philosopherright$), write)
-    exhale acc(Fork$MonitorInvariant(this$_2.Philosopherright$), write)
-    fold acc(Philosophervalid$(this$_2), write)
+    unfold acc(Philosophervalid$(this$_2))
+    inhale acc(Fork$MonitorInvariant(this$_2.Philosopherleft$))
+    unfold acc(Fork$MonitorInvariant(this$_2.Philosopherleft$))
+    inhale acc(Fork$MonitorInvariant(this$_2.Philosopherright$))
+    unfold acc(Fork$MonitorInvariant(this$_2.Philosopherright$))
+    fold acc(Fork$MonitorInvariant(this$_2.Philosopherleft$))
+    exhale acc(Fork$MonitorInvariant(this$_2.Philosopherleft$))
+    fold acc(Fork$MonitorInvariant(this$_2.Philosopherright$))
+    exhale acc(Fork$MonitorInvariant(this$_2.Philosopherright$))
+    fold acc(Philosophervalid$(this$_2))
   }
 }
 

@@ -7,19 +7,19 @@ field next: Ref
 predicate valid(this: Ref) {
      acc(this.value, write)
   && acc(this.next, write)
-  && (((this.next) != (null)) ==> acc(valid(this.next), write))
+  && (((this.next) != (null)) ==> acc(valid(this.next)))
 }
 
 function length(this: Ref): Int
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   ensures result > 0
-{ (unfolding acc(valid(this), write) in (((this.next) == (null)) ? 1 : 1 + length(this.next))) }
+{ (unfolding acc(valid(this)) in (((this.next) == (null)) ? 1 : 1 + length(this.next))) }
 
 function itemAt(this: Ref, i: Int): Int
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   requires 0 <= i
   requires i < length(this)
-{ (unfolding acc(valid(this), write) in (((i) == (0)) || ((this.next) == (null)) ? this.value : itemAt(this.next, i - 1))) }
+{ (unfolding acc(valid(this)) in (((i) == (0)) || ((this.next) == (null)) ? this.value : itemAt(this.next, i - 1))) }
 
 method test1(this: Ref)
 {
@@ -29,7 +29,7 @@ method test1(this: Ref)
   x.next := x
 
   //:: ExpectedOutput(fold.failed:insufficient.permission)
-  fold acc(valid(x), write)
+  fold acc(valid(x))
 }
 
 method test2(this: Ref)

@@ -9,7 +9,7 @@ predicate LinkedListvalid(this: Ref) {
 method LinkedListSearch(this: Ref) returns (k: Perm, i: Int)
 {
   //:: ExpectedOutput(exhale.failed:insufficient.permission)
-  exhale (unfolding acc(LinkedListvalid(this), write) in i <= 5) && true
+  exhale (unfolding acc(LinkedListvalid(this)) in i <= 5) && true
 }
 
 //APPENDED PERMISSION MODEL

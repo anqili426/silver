@@ -12,10 +12,10 @@ method Testfail10$(this: Ref, k$: Perm)
   requires this != null
   requires k$ > none
   requires write > k$
-  requires acc(TestP$(this), write)
-  ensures acc(TestP$(this), write)
+  requires acc(TestP$(this))
+  ensures acc(TestP$(this))
   //:: ExpectedOutput(not.wellformed:insufficient.permission)
-  ensures (unfolding acc(TestP$(this), write) in this.Testx$ == old(this.Testx$))
+  ensures (unfolding acc(TestP$(this)) in this.Testx$ == old(this.Testx$))
 {
 }
 

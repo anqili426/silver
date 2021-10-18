@@ -34,15 +34,15 @@ predicate PseudoList$MonitorInvariant(this$: Ref) {
 }
 
 predicate PseudoListinv$(this$_3: Ref) {
-  acc(this$_3.PseudoListvalue$, write) && acc(this$_3.PseudoListnext$, write) && (this$_3.PseudoListnext$ != null) && acc(PseudoListinv$(this$_3.PseudoListnext$), write)
+  acc(this$_3.PseudoListvalue$) && acc(this$_3.PseudoListnext$) && (this$_3.PseudoListnext$ != null) && acc(PseudoListinv$(this$_3.PseudoListnext$))
 }
 
 method PseudoListstatic_range_workaround$(this$_1: Ref, k$: Perm)
   requires this$_1 != null
   requires k$ > none
   requires write > k$
-  requires acc(PseudoListinv$(this$_1), write)
-  ensures acc(PseudoListinv$(this$_1), write)
+  requires acc(PseudoListinv$(this$_1))
+  ensures acc(PseudoListinv$(this$_1))
 {
   var n$: Ref
   var a$: Ref

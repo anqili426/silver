@@ -81,16 +81,16 @@ predicate Triggers$MonitorInvariant(this$: Ref) {
 }
 
 predicate Triggersvalid$(this$_1: Ref) {
-  acc(this$_1.Triggersnext$, write) && (this$_1.Triggersnext$ != null) && acc(Triggersvalid$(this$_1.Triggersnext$), write)
+  acc(this$_1.Triggersnext$) && (this$_1.Triggersnext$ != null) && acc(Triggersvalid$(this$_1.Triggersnext$))
 }
 
 method Triggerstriggers_one$(this$_6: Ref, k$: Perm)
   requires this$_6 != null
   requires k$ > none
   requires write > k$
-  requires acc(Triggersvalid$(this$_6), write)
+  requires acc(Triggersvalid$(this$_6))
   requires (forall a: Int :: true ==> !(Triggersg$(this$_6, a) ==> false))
-  ensures acc(Triggersvalid$(this$_6), write)
+  ensures acc(Triggersvalid$(this$_6))
   ensures (forall b: Int :: true ==> Triggersg$(this$_6, b))
 {
   var n$: Ref
@@ -101,10 +101,10 @@ method Triggerstriggers_two$(this$_7: Ref, k$_1: Perm)
   requires this$_7 != null
   requires k$_1 > none
   requires write > k$_1
-  requires acc(Triggersvalid$(this$_7), write)
+  requires acc(Triggersvalid$(this$_7))
   requires (forall a: Int, b: Int, c: Int :: // Admits only trigger f(...), but not g(...)
     true ==> Triggersg$(this$_7, a) && Triggersf$(this$_7, a, b, c))
-  ensures acc(Triggersvalid$(this$_7), write)
+  ensures acc(Triggersvalid$(this$_7))
   ensures (forall x: Int, y: Int, z: Int :: true ==> Triggersf$(this$_7, x, y, z))
   //:: ExpectedOutput(postcondition.violated:assertion.false)
   ensures (forall w: Int :: // Fails because above quantifier isn't triggered, due to insufficient trigger terms
@@ -118,11 +118,11 @@ method Triggerstriggers_three$(this$_8: Ref, k$_2: Perm)
   requires this$_8 != null
   requires k$_2 > none
   requires write > k$_2
-  requires acc(Triggersvalid$(this$_8), write)
+  requires acc(Triggersvalid$(this$_8))
   requires forall a: Int :: true ==>
               Triggersg$(this$_8, a) &&
               (forall b: Int, c: Int :: true ==> Triggersf$(this$_8, a, b, c))
-  ensures acc(Triggersvalid$(this$_8), write)
+  ensures acc(Triggersvalid$(this$_8))
   //:: ExpectedOutput(postcondition.violated:assertion.false)
   ensures (forall x: Int, y: Int, z: Int :: true ==> Triggersf$(this$_8, x, y, z)) // Insufficient trigger terms
   ensures (forall w: Int :: true ==> Triggersg$(this$_8, w))
@@ -135,10 +135,10 @@ method Triggerstriggers_four$(this$_9: Ref, k$_3: Perm)
   requires this$_9 != null
   requires k$_3 > none
   requires write > k$_3
-  requires acc(Triggersvalid$(this$_9), write)
+  requires acc(Triggersvalid$(this$_9))
   requires (forall a: Int, b: Int, c: Int, d: Int, e: Int ::
               true ==> Triggersf$(this$_9, a, b, c) && Triggersh$(this$_9, b, c, d) && Triggersf$(this$_9, c, d, e))
-  ensures acc(Triggersvalid$(this$_9), write)
+  ensures acc(Triggersvalid$(this$_9))
   //:: ExpectedOutput(postcondition.violated:assertion.false)
   ensures (forall x: Int, y: Int, z: Int :: true ==> Triggersf$(this$_9, x, y, z)) // Insufficient trigger terms
   ensures (forall x: Int, y: Int, z: Int :: true ==> Triggersf$(this$_9, x, y, z) && Triggersf$(this$_9, z, y, x))
@@ -152,9 +152,9 @@ method Triggerstriggers_five$(this$_10: Ref, k$_4: Perm, c: Bool, d: Bool)
   requires k$_4 > none
   requires write > k$_4
   requires c ==> d
-  requires acc(Triggersvalid$(this$_10), write)
+  requires acc(Triggersvalid$(this$_10))
   requires (forall x: Int :: true ==> Triggersi$(this$_10, x, c ==> d))
-  ensures acc(Triggersvalid$(this$_10), write)
+  ensures acc(Triggersvalid$(this$_10))
   ensures Triggersi$(this$_10, 4, true)
 {
   var n$_4: Ref
@@ -166,9 +166,9 @@ method Triggerstriggers_six$(this$_11: Ref, k$_5: Perm, c: Int, d: Int)
   requires k$_5 > none
   requires write > k$_5
   requires c > d
-  requires acc(Triggersvalid$(this$_11), write)
+  requires acc(Triggersvalid$(this$_11))
   requires (forall x: Int :: true ==> Triggersi$(this$_11, x, c > d))
-  ensures acc(Triggersvalid$(this$_11), write)
+  ensures acc(Triggersvalid$(this$_11))
   ensures Triggersi$(this$_11, 4, true)
 {
   var n$_5: Ref

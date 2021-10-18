@@ -18,7 +18,7 @@ be simply translated to true, because of short-circuit evaluation:
 
   // Here the error should be assert false, and if we replaced unfolding
   // with true, we would get insufficient permission.
-  exhale (unfolding acc(P(this), write) in false) && this.x == 0
+  exhale (unfolding acc(P(this)) in false) && this.x == 0
 
 */
 predicate P(this: Ref) {
@@ -28,19 +28,19 @@ predicate P(this: Ref) {
 field x: Int
 
 method test0(this: Ref)
-  requires acc(P(this), write)
+  requires acc(P(this))
   //:: ExpectedOutput(not.wellformed:insufficient.permission)
   //:: ExpectedOutput(postcondition.violated:assertion.false)
   //:: MissingOutput(postcondition.violated:assertion.false, /Silicon/issue/34/)
-  ensures (unfolding acc(P(this), write) in true) && this.x == 0
+  ensures (unfolding acc(P(this)) in true) && this.x == 0
 {
 }
 
 method test1(this: Ref)
 {
-  inhale acc(P(this), write) && this != null
+  inhale acc(P(this)) && this != null
   //:: ExpectedOutput(exhale.failed:insufficient.permission)
-  exhale (unfolding acc(P(this), write) in true) && this.x == 0
+  exhale (unfolding acc(P(this)) in true) && this.x == 0
 }
 
 method test1Reference(this: Ref)
@@ -52,9 +52,9 @@ method test1Reference(this: Ref)
 
 method test2(this: Ref)
 {
-  inhale acc(P(this), write)
+  inhale acc(P(this))
   //:: ExpectedOutput(exhale.failed:assertion.false)
-  exhale (unfolding acc(P(this), write) in false) && this.x == 0
+  exhale (unfolding acc(P(this)) in false) && this.x == 0
 }
 
 method test2Reference(this: Ref)
@@ -71,16 +71,16 @@ predicate V(this: Ref) {
 
 method test3(this: Ref)
 {
-  inhale acc(V(this), write)
+  inhale acc(V(this))
   //:: ExpectedOutput(exhale.failed:assertion.false)
-  exhale (unfolding acc(V(this), write) in this.y == 2) && this.x == 0
+  exhale (unfolding acc(V(this)) in this.y == 2) && this.x == 0
 }
 
 method test4(this: Ref)
 {
-  inhale acc(V(this), write)
+  inhale acc(V(this))
   //:: ExpectedOutput(exhale.failed:assertion.false)
-  exhale (unfolding acc(V(this), write) in this.y) == 2 && this.x == 0
+  exhale (unfolding acc(V(this)) in this.y) == 2 && this.x == 0
 }
 
 //APPENDED PERMISSION MODEL

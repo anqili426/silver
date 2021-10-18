@@ -31,11 +31,11 @@ function Listlen(this: Ref): Int
 }
 
 predicate Nodeinv(this: Ref) {
-  acc(this.Nodev, write) && acc(this.Noden, write) && ((this.Noden != null) ==> acc(Nodeinv(this.Noden), write))
+  acc(this.Nodev) && acc(this.Noden) && ((this.Noden != null) ==> acc(Nodeinv(this.Noden)))
 }
 
 predicate Listinv(this: Ref) {
-  acc(this.Listc, write) && ((this.Listc != null) ==> acc(Nodeinv(this.Listc), write))
+  acc(this.Listc) && ((this.Listc != null) ==> acc(Nodeinv(this.Listc)))
 }
 
 //APPENDED PERMISSION MODEL

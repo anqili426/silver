@@ -12,15 +12,15 @@ function i(this: Ref, x: Int, y: Bool): Bool
 }
 
 predicate valid(this: Ref) {
-  acc(this.next, write) && (this.next != null) && acc(valid(this.next), write)
+  acc(this.next) && (this.next != null) && acc(valid(this.next))
 }
 
 method triggersSix$(this: Ref, c: Int, d: Int)
   requires this != null
   requires c > d
-  requires acc(valid(this), write)
+  requires acc(valid(this))
   requires (forall x: Int :: true ==> i(this, x, c > d))
-  ensures acc(valid(this), write)
+  ensures acc(valid(this))
   ensures i(this, 4, true)
 {
 }

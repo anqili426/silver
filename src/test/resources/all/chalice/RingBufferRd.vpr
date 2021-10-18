@@ -31,7 +31,7 @@ function Capacity(this: Ref): Int
   method Create(this: Ref, n: Int)
     requires 0 <= n;
     requires acc(this.data, write) && acc(this.first, write) && acc(this.len, write);
-    ensures acc(Valid(this), write);
+    ensures acc(Valid(this));
     ensures Contents(this) == Seq[Int]() && Capacity(this) == n;
   {
     // simulate creating an array of length n
@@ -46,17 +46,17 @@ function Capacity(this: Ref): Int
     }
     this.first := 0;
     this.len := 0;
-    fold acc(Valid(this), write);
+    fold acc(Valid(this));
   }
 
 method Clear(this: Ref)
-    requires acc(Valid(this), write);
-    ensures acc(Valid(this), write);
+    requires acc(Valid(this));
+    ensures acc(Valid(this));
     ensures Contents(this) == Seq[Int]() && Capacity(this) == old(Capacity(this));
   {
-    unfold acc(Valid(this), write);
+    unfold acc(Valid(this));
     this.len := 0;
-    fold acc(Valid(this), write);
+    fold acc(Valid(this));
   }
 
 method Head(this: Ref) returns (x: Int)
@@ -80,13 +80,13 @@ method Head(this: Ref) returns (x: Int)
   }
 
     method Push(this: Ref, x: Int)
-    requires acc(Valid(this), write);
+    requires acc(Valid(this));
     requires |Contents(this)| != Capacity(this);
-    ensures acc(Valid(this), write);
+    ensures acc(Valid(this));
     ensures Contents(this) == old(Contents(this)) ++ Seq(x);
     ensures Capacity(this) == old(Capacity(this));
   {
-    unfold acc(Valid(this), write);
+    unfold acc(Valid(this));
     var nextEmpty: Int;
     if (this.first + this.len < |this.data|)
     {
@@ -98,16 +98,16 @@ method Head(this: Ref) returns (x: Int)
     }
     this.data := this.data[..nextEmpty] ++ Seq(x) ++  this.data[nextEmpty+1..];
     this.len := this.len + 1;
-    fold acc(Valid(this), write);
+    fold acc(Valid(this));
   }
 
     method Pop(this: Ref) returns (x: Int)
-    requires acc(Valid(this), write);
+    requires acc(Valid(this));
     requires Contents(this) != Seq(1)[1..];
-    ensures acc(Valid(this), write);
+    ensures acc(Valid(this));
     ensures x == old(Contents(this))[0] && Contents(this) == old(Contents(this))[1..] && Capacity(this) == old(Capacity(this));
   {
-    unfold acc(Valid(this), write);
+    unfold acc(Valid(this));
     x := this.data[this.first];
     if(this.first + 1 == |this.data|)
     {
@@ -118,7 +118,7 @@ method Head(this: Ref) returns (x: Int)
       this.first := this.first + 1;
     }
     this.len := this.len - 1;
-    fold acc(Valid(this), write);
+    fold acc(Valid(this));
   }
 
   method TestHarness(x: Int, y: Int, z: Int)

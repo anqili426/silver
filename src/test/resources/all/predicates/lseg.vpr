@@ -6,70 +6,70 @@ field value: Int
 
 predicate lseg(this: Ref, end: Ref) {
     acc(this.value, write) && acc(this.next, write) &&
-       (this.next != end ==> this.next != null && acc(lseg(this.next, end), write))
+       (this.next != end ==> this.next != null && acc(lseg(this.next, end)))
 }
 
 function get(this: Ref, i: Int, end: Ref): Int
-    requires acc(lseg(this, end), write)
+    requires acc(lseg(this, end))
     requires 0 <= i && i < length(this, end)
 {
-    unfolding acc(lseg(this, end), write) in (i == 0 ? this.value : get(this.next, i-1, end))
+    unfolding acc(lseg(this, end)) in (i == 0 ? this.value : get(this.next, i-1, end))
 }
 
 function length(this: Ref, end: Ref): Int
-    requires acc(lseg(this, end), write)
+    requires acc(lseg(this, end))
     ensures result > 0
 {
-    unfolding acc(lseg(this, end), write) in (this.next == end ? 1 : 1 + length(this.next, end))
+    unfolding acc(lseg(this, end)) in (this.next == end ? 1 : 1 + length(this.next, end))
 }
 
 method init(this: Ref, val: Int)
     requires acc(this.next, write)
     requires acc(this.value, write)
-    ensures acc(lseg(this, null), write)
+    ensures acc(lseg(this, null))
     ensures length(this, null) == 1
     ensures get(this, 0, null) == val
 {
     this.next := null
     this.value := val
-    fold acc(lseg(this, null), write)
+    fold acc(lseg(this, null))
 }
 
 method initUnitCycle(this: Ref, val: Int)
     requires acc(this.next, write)
     requires acc(this.value, write)
-    ensures acc(lseg(this, this), write)
+    ensures acc(lseg(this, this))
     ensures length(this, this) == 1
     ensures get(this, 0, this) == val
-    ensures unfolding acc(lseg(this, this), write) in this.next == this
+    ensures unfolding acc(lseg(this, this)) in this.next == this
 {
     this.next := this
     this.value := val
-    fold acc(lseg(this, this), write)
+    fold acc(lseg(this, this))
 }
 
 method addAtEnd(this: Ref, end: Ref, val: Int)
-    requires acc(lseg(this, end), write)
-    ensures acc(lseg(this, end), write) /* POST1 */
+    requires acc(lseg(this, end))
+    ensures acc(lseg(this, end)) /* POST1 */
     ensures length(this, end) == (old(length(this, end)) + 1) /* POST2 */
     ensures (forall i: Int :: (0 <= i && i < old(length(this, end))) ==> (get(this, i, end) == old(get(this, i, end)))) /* POST3 */
     ensures get(this, length(this, end) - 1, end) == val /* POST4 */
 {
     var n: Ref
 
-    unfold acc(lseg(this, end), write)
+    unfold acc(lseg(this, end))
 
     if (this.next == end) {
         n := new(*)
         n.next := end
         n.value := val
         this.next := n
-        fold acc(lseg(n, end), write)
+        fold acc(lseg(n, end))
     } else {
         addAtEnd(this.next, end, val)
     }
 
-    fold acc(lseg(this, end), write)
+    fold acc(lseg(this, end))
 }
 
 method t1()

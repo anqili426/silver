@@ -25,7 +25,7 @@ method TestunfoldVRd$(this: Ref, k: Perm)
   requires this != null
   requires k > none
   requires write > k
-  requires acc(P(this), write)
+  requires acc(P(this))
 {
   var tk1: Ref
 

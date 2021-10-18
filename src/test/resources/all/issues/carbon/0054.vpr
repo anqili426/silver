@@ -10,8 +10,8 @@ predicate V(this: Ref) {
 
 method Test02test04$(this: Ref)
   requires this != null
-  requires acc(V(this), write)
-  ensures acc(V(this), write)
+  requires acc(V(this))
+  ensures acc(V(this))
   //:: ExpectedOutput(postcondition.violated:insufficient.permission)
   ensures acc(this.f, wildcard)
 {

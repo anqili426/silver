@@ -7,20 +7,20 @@ field List_head: Ref
 
 predicate List_valid(this: Ref) {
 	   acc(this.List_head, write)
-	&& (this.List_head != null ==> acc(Node_valid(this.List_head), write))
+	&& (this.List_head != null ==> acc(Node_valid(this.List_head)))
 }
 
 function List_size(this: Ref): Int
-	requires acc(List_valid(this), write)
+	requires acc(List_valid(this))
 	ensures result >= 0
 {
-	unfolding acc(List_valid(this), write) in (this.List_head == null ? 0 : Node_size(this.List_head))
+	unfolding acc(List_valid(this)) in (this.List_head == null ? 0 : Node_size(this.List_head))
 }
 
 method List_test(this: Ref, i: Int)
-  requires acc(List_valid(this), write)
+  requires acc(List_valid(this))
   requires i >= 0 && i < List_size(this)
-  ensures acc(List_valid(this), write)
+  ensures acc(List_valid(this))
 {
   //:: ExpectedOutput(assert.failed:assertion.false)
   assert List_size(this) == 1
@@ -37,20 +37,20 @@ field Node_next: Ref
 predicate Node_valid(this: Ref) {
 	   acc(this.Node_value, write)
 	&& acc(this.Node_next, write)
-	&& (this.Node_next != null ==> acc(Node_valid(this.Node_next), write))
+	&& (this.Node_next != null ==> acc(Node_valid(this.Node_next)))
 }
 
 function Node_val(this: Ref): Int
-  requires acc(Node_valid(this), write)
+  requires acc(Node_valid(this))
 {
-  unfolding acc(Node_valid(this), write) in this.Node_value
+  unfolding acc(Node_valid(this)) in this.Node_value
 }
 
 function Node_size(this: Ref): Int
-  requires acc(Node_valid(this), write)
+  requires acc(Node_valid(this))
   ensures result >= 1
 {
-  1 + unfolding acc(Node_valid(this), write) in this.Node_next != null ? Node_size(this.Node_next) : 0
+  1 + unfolding acc(Node_valid(this)) in this.Node_next != null ? Node_size(this.Node_next) : 0
 }
 
 //APPENDED PERMISSION MODEL

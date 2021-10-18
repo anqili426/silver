@@ -33,13 +33,13 @@ method Lalakoko$(this$_2: Ref, k$: Perm)
   requires this$_2 != null
   requires k$ > none
   requires write > k$
-  requires acc(Lalainv$(this$_2), write)
+  requires acc(Lalainv$(this$_2))
 {
   var n$: Ref
   var a$: Ref
   var b$: Ref
   var c$: Ref
-  assert (unfolding acc(Lalainv$(this$_2), write) in this$_2.Lalax$) == old((unfolding acc(Lalainv$(this$_2), write) in this$_2.Lalax$))
+  assert (unfolding acc(Lalainv$(this$_2)) in this$_2.Lalax$) == old((unfolding acc(Lalainv$(this$_2)) in this$_2.Lalax$))
 }
 
 //APPENDED PERMISSION MODEL

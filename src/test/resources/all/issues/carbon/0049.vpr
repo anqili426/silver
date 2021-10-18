@@ -29,13 +29,13 @@ predicate Cellread2$(this$_3: Ref) {
 
 method Cellb3$(this: Ref, k$: Perm)
   requires this != null
-  requires acc(Cellread1$(this), write) 
+  requires acc(Cellread1$(this)) 
 {
-  unfold acc(Cellread1$(this), write)
-  fold acc(Cellread2$(this), write)
-  fold acc(Cellread2$(this), write)
+  unfold acc(Cellread1$(this))
+  fold acc(Cellread2$(this))
+  fold acc(Cellread2$(this))
   //:: ExpectedOutput(fold.failed:insufficient.permission)
-  fold acc(Cellwrite1$(this), write)
+  fold acc(Cellwrite1$(this))
 }
 
 //APPENDED PERMISSION MODEL

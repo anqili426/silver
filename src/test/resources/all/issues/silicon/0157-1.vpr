@@ -30,12 +30,12 @@ method Testfoo$(this: Ref, k$: Perm)
   requires this != null
   requires k$ > none
   requires write > k$
-  requires acc(TestV$(this), write)
-  ensures acc(TestV$(this), write)
+  requires acc(TestV$(this))
+  ensures acc(TestV$(this))
 {
-  unfold acc(TestV$(this), write)
+  unfold acc(TestV$(this))
   this.Testx$ := this.Testx$ + 1
-  fold acc(TestV$(this), write)
+  fold acc(TestV$(this))
 }
 
 method TestBug(this: Ref, k$_1: Perm)
@@ -58,13 +58,13 @@ method TestjoinTk$(this: Ref, k$_1: Perm)
   requires k$_1 > none
   requires write > k$_1
   requires acc(this.Testtk$, write) && (this.Testtk$ != null) && acc(this.Testtk$.joinable$, write) && this.Testtk$.joinable$
-  ensures acc(TestV$(this), write)
+  ensures acc(TestV$(this))
 {
   assert this.Testtk$.joinable$
   //:: ExpectedOutput(inhale.failed:insufficient.permission)
-  inhale true && acc(TestV$(this.Testtk$.par$Testfoo$this$_2), write)
+  inhale true && acc(TestV$(this.Testtk$.par$Testfoo$this$_2))
   this.Testtk$.joinable$ := false
-  assert acc(TestV$(this), write)
+  assert acc(TestV$(this))
 }
 
 //APPENDED PERMISSION MODEL

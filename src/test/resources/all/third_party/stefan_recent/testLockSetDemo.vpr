@@ -18,13 +18,13 @@ predicate Client__inv(diz: Ref, p: Perm) {
 method LockSet__LockSet(current_thread_id: Int) returns (sys__result: Ref)
   requires current_thread_id >= 0
   ensures sys__result != null
-  ensures acc(LockSet__lockset(sys__result, Multiset[Ref]()), write)
+  ensures acc(LockSet__lockset(sys__result, Multiset[Ref]()))
 {
   var diz: Ref
   diz := new()
   inhale false
   sys__result := diz
-  assert (sys__result != null) && acc(LockSet__lockset(sys__result, Multiset[Ref]()), write)
+  assert (sys__result != null) && acc(LockSet__lockset(sys__result, Multiset[Ref]()))
   inhale false
 }
 
@@ -33,11 +33,11 @@ method Lock__lock(diz: Ref, current_thread_id: Int, S: Multiset[Ref])
   requires current_thread_id >= 0
   requires acc(diz.Lock__owner, wildcard)
   requires acc(diz.Lock__user, wildcard)
-  requires acc(LockSet__lockset(diz.Lock__owner, S), write)
+  requires acc(LockSet__lockset(diz.Lock__owner, S))
   ensures acc(diz.Lock__owner, wildcard)
   ensures acc(diz.Lock__user, wildcard)
-  ensures ((diz in S) == 0) ==> acc(Client__inv(diz.Lock__user, write), write)
-  ensures acc(LockSet__lockset(diz.Lock__owner, S union Multiset(diz)), write)
+  ensures ((diz in S) == 0) ==> acc(Client__inv(diz.Lock__user))
+  ensures acc(LockSet__lockset(diz.Lock__owner, S union Multiset(diz)))
 {
   inhale false
 }
@@ -47,18 +47,18 @@ method Lock__unlock(diz: Ref, current_thread_id: Int, S: Multiset[Ref])
   requires current_thread_id >= 0
   requires acc(diz.Lock__owner, wildcard)
   requires acc(diz.Lock__user, wildcard)
-  requires acc(LockSet__lockset(diz.Lock__owner, S union Multiset(diz)), write)
-  requires ((diz in S) == 0) ==> acc(Client__inv(diz.Lock__user, write), write)
+  requires acc(LockSet__lockset(diz.Lock__owner, S union Multiset(diz)))
+  requires ((diz in S) == 0) ==> acc(Client__inv(diz.Lock__user))
   ensures acc(diz.Lock__owner, wildcard)
   ensures acc(diz.Lock__user, wildcard)
-  ensures acc(LockSet__lockset(diz.Lock__owner, S), write)
+  ensures acc(LockSet__lockset(diz.Lock__owner, S))
 {
   inhale false
 }
 
 method Lock__Lock(current_thread_id: Int, owner: Ref, user: Ref) returns (sys__result: Ref)
   requires current_thread_id >= 0
-  requires acc(Client__inv(user, write), write)
+  requires acc(Client__inv(user))
   ensures sys__result != null
   ensures acc(sys__result.Lock__owner, wildcard)
   ensures acc(sys__result.Lock__user, wildcard)
@@ -92,12 +92,12 @@ method Client__main(diz: Ref, current_thread_id: Int)
   var __flatten_21: Int
   __flatten_1 := LockSet__LockSet(current_thread_id)
   ls := __flatten_1
-  assert acc(LockSet__lockset(ls, Multiset[Ref]()), write)
-  fold acc(Client__inv(diz, write), write)
+  assert acc(LockSet__lockset(ls, Multiset[Ref]()))
+  fold acc(Client__inv(diz))
   __flatten_2 := Lock__Lock(current_thread_id, ls, diz)
   l := __flatten_2
   Lock__lock(l, current_thread_id, Multiset[Ref]())
-  unfold acc(Client__inv(diz, write), write)
+  unfold acc(Client__inv(diz))
   __flatten_4 := 1
   __flatten_15 := __flatten_4
   diz.Client__x := __flatten_15
@@ -110,11 +110,11 @@ method Client__main(diz: Ref, current_thread_id: Int)
   __flatten_8 := 3
   __flatten_19 := __flatten_8
   diz.Client__x := __flatten_19
-  fold acc(Client__inv(diz, write), write)
+  fold acc(Client__inv(diz))
   Lock__unlock(l, current_thread_id, Multiset[Ref]())
     //:: ExpectedOutput(unfold.failed:insufficient.permission)
     // confirmed by Stefan Blom
-  unfold acc(Client__inv(diz, write), write)
+  unfold acc(Client__inv(diz))
   __flatten_10 := 4
   __flatten_21 := __flatten_10
   diz.Client__x := __flatten_21

@@ -15,26 +15,26 @@ function NodegetNext$(this: Ref): Ref
 }
 
 predicate Nodevalid$(this: Ref) {
-  acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && ((this.Nodenext$ != null) ==> acc(Nodevalid$(this.Nodenext$), write))
+  acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && ((this.Nodenext$ != null) ==> acc(Nodevalid$(this.Nodenext$)))
 }
 
 predicate Nodep$(this: Ref) {
-  acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && ((this.Nodenext$ != null) ==> acc(Nodeq$(this.Nodenext$), write))
+  acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && ((this.Nodenext$ != null) ==> acc(Nodeq$(this.Nodenext$)))
 }
 
 predicate Nodeq$(this: Ref) {
-  acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && ((this.Nodenext$ != null) ==> acc(Nodep$(this.Nodenext$), write))
+  acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && ((this.Nodenext$ != null) ==> acc(Nodep$(this.Nodenext$)))
 }
 
 method NodetestNestingUnfold$(this: Ref)
   requires this != null
-  requires acc(Nodevalid$(this), write)
+  requires acc(Nodevalid$(this))
 {
-  unfold acc(Nodevalid$(this), write)
+  unfold acc(Nodevalid$(this))
   //:: UnexpectedOutput(assert.failed:assertion.false, /Silicon/issue/154/)
   assert this != this.Nodenext$
   if (this.Nodenext$ != null) {
-    unfold acc(Nodevalid$(this.Nodenext$), write)
+    unfold acc(Nodevalid$(this.Nodenext$))
     assert this.Nodenext$ != this.Nodenext$.Nodenext$
     assert this != this.Nodenext$.Nodenext$
   }
@@ -42,37 +42,37 @@ method NodetestNestingUnfold$(this: Ref)
 
 method NodetestNestingFold$(this: Ref)
   requires this != null
-  requires acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && acc(this.Nodenext$.Nodenext$, wildcard) && acc(this.Nodenext$.Nodevalue$, wildcard) && (this.Nodenext$ != null) && (this.Nodenext$.Nodenext$ != null) && acc(Nodevalid$(this.Nodenext$.Nodenext$), write)
+  requires acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && acc(this.Nodenext$.Nodenext$, wildcard) && acc(this.Nodenext$.Nodevalue$, wildcard) && (this.Nodenext$ != null) && (this.Nodenext$.Nodenext$ != null) && acc(Nodevalid$(this.Nodenext$.Nodenext$))
 {
-  fold acc(Nodevalid$(this.Nodenext$), write)
+  fold acc(Nodevalid$(this.Nodenext$))
   //:: UnexpectedOutput(assert.failed:assertion.false, /Silicon/issue/154/)
   assert this.Nodenext$ != this.Nodenext$.Nodenext$
-  fold acc(Nodevalid$(this), write)
+  fold acc(Nodevalid$(this))
   assert this != this.Nodenext$
   assert this != this.Nodenext$.Nodenext$
 }
 
 method NodetestNestingUnfolding$(this: Ref)
   requires this != null
-  requires acc(Nodevalid$(this), write)
+  requires acc(Nodevalid$(this))
 {
   //:: UnexpectedOutput(assert.failed:assertion.false, /Silicon/issue/154/)
-  assert this != (unfolding acc(Nodevalid$(this), write) in this.Nodenext$)
-  if ((unfolding acc(Nodevalid$(this), write) in this.Nodenext$) != null) {
-    assert (unfolding acc(Nodevalid$(this), write) in this.Nodenext$) != (unfolding acc(Nodevalid$(this), write) in (unfolding acc(Nodevalid$(this.Nodenext$), write) in this.Nodenext$.Nodenext$))
-    assert this != (unfolding acc(Nodevalid$(this), write) in (unfolding acc(Nodevalid$(this.Nodenext$), write) in this.Nodenext$.Nodenext$))
+  assert this != (unfolding acc(Nodevalid$(this)) in this.Nodenext$)
+  if ((unfolding acc(Nodevalid$(this)) in this.Nodenext$) != null) {
+    assert (unfolding acc(Nodevalid$(this)) in this.Nodenext$) != (unfolding acc(Nodevalid$(this)) in (unfolding acc(Nodevalid$(this.Nodenext$)) in this.Nodenext$.Nodenext$))
+    assert this != (unfolding acc(Nodevalid$(this)) in (unfolding acc(Nodevalid$(this.Nodenext$)) in this.Nodenext$.Nodenext$))
   }
 }
 
 method NodetestNestingUnfoldTwo$(this: Ref)
   requires this != null
-  requires acc(Nodep$(this), write)
+  requires acc(Nodep$(this))
 {
-  unfold acc(Nodep$(this), write)
+  unfold acc(Nodep$(this))
   //:: ExpectedOutput(assert.failed:assertion.false)
   assert this != this.Nodenext$
   if (this.Nodenext$ != null) {
-    unfold acc(Nodeq$(this.Nodenext$), write)
+    unfold acc(Nodeq$(this.Nodenext$))
     //:: ExpectedOutput(assert.failed:assertion.false)
     //:: MissingOutput(assert.failed:assertion.false, /Silicon/issue/34/)
     assert this.Nodenext$ != this.Nodenext$.Nodenext$
@@ -82,9 +82,9 @@ method NodetestNestingUnfoldTwo$(this: Ref)
 
 method NodetestNestingFoldTwo$(this: Ref)
   requires this != null
-  requires acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && acc(this.Nodenext$.Nodenext$, wildcard) && acc(this.Nodenext$.Nodevalue$, wildcard) && (this.Nodenext$ != null) && (this.Nodenext$.Nodenext$ != null) && acc(Nodep$(this.Nodenext$.Nodenext$), write)
+  requires acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && acc(this.Nodenext$.Nodenext$, wildcard) && acc(this.Nodenext$.Nodevalue$, wildcard) && (this.Nodenext$ != null) && (this.Nodenext$.Nodenext$ != null) && acc(Nodep$(this.Nodenext$.Nodenext$))
 {
-  fold acc(Nodeq$(this.Nodenext$), write)
+  fold acc(Nodeq$(this.Nodenext$))
   //:: ExpectedOutput(assert.failed:assertion.false)
   assert this != this.Nodenext$
   //:: ExpectedOutput(assert.failed:assertion.false)
@@ -97,10 +97,10 @@ method NodetestNestingFoldTwo$(this: Ref)
 
 method NodetestNestingFoldThree$(this: Ref)
   requires this != null
-  requires acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && acc(this.Nodenext$.Nodenext$, wildcard) && acc(this.Nodenext$.Nodevalue$, wildcard) && (this.Nodenext$ != null) && (this.Nodenext$.Nodenext$ != null) && acc(Nodep$(this.Nodenext$.Nodenext$), write)
+  requires acc(this.Nodenext$, wildcard) && acc(this.Nodevalue$, wildcard) && acc(this.Nodenext$.Nodenext$, wildcard) && acc(this.Nodenext$.Nodevalue$, wildcard) && (this.Nodenext$ != null) && (this.Nodenext$.Nodenext$ != null) && acc(Nodep$(this.Nodenext$.Nodenext$))
 {
-  fold acc(Nodeq$(this.Nodenext$), write)
-  fold acc(Nodep$(this), write)
+  fold acc(Nodeq$(this.Nodenext$))
+  fold acc(Nodep$(this))
   //:: UnexpectedOutput(assert.failed:assertion.false, /Silicon/issue/154/)
   assert this != this.Nodenext$
   //:: ExpectedOutput(assert.failed:assertion.false)
@@ -111,21 +111,21 @@ method NodetestNestingFoldThree$(this: Ref)
 
 method NodetestNestingUnfoldingTwo$(this: Ref)
   requires this != null
-  requires acc(Nodep$(this), write)
+  requires acc(Nodep$(this))
 {
   //:: ExpectedOutput(assert.failed:assertion.false)
-  assert this != (unfolding acc(Nodep$(this), write) in this.Nodenext$)
-  if ((unfolding acc(Nodep$(this), write) in this.Nodenext$) != null) {
+  assert this != (unfolding acc(Nodep$(this)) in this.Nodenext$)
+  if ((unfolding acc(Nodep$(this)) in this.Nodenext$) != null) {
     //:: ExpectedOutput(assert.failed:assertion.false)
     //:: MissingOutput(assert.failed:assertion.false, /Silicon/issue/34/)
-    assert (unfolding acc(Nodep$(this), write) in this.Nodenext$) != (unfolding acc(Nodep$(this), write) in (unfolding acc(Nodeq$(this.Nodenext$), write) in this.Nodenext$.Nodenext$))
-    assert this != (unfolding acc(Nodep$(this), write) in (unfolding acc(Nodeq$(this.Nodenext$), write) in this.Nodenext$.Nodenext$))
+    assert (unfolding acc(Nodep$(this)) in this.Nodenext$) != (unfolding acc(Nodep$(this)) in (unfolding acc(Nodeq$(this.Nodenext$)) in this.Nodenext$.Nodenext$))
+    assert this != (unfolding acc(Nodep$(this)) in (unfolding acc(Nodeq$(this.Nodenext$)) in this.Nodenext$.Nodenext$))
   }
 }
 
 method NodetestNestingUnfoldingPrecondition$(this: Ref, x: Ref)
   requires this != null
-  requires acc(Nodevalid$(this), write) && (unfolding acc(Nodevalid$(this), write) in this.Nodenext$ == x)
+  requires acc(Nodevalid$(this)) && (unfolding acc(Nodevalid$(this)) in this.Nodenext$ == x)
 {
   //:: UnexpectedOutput(assert.failed:assertion.false, /Silicon/issue/154/)
   assert this != x
@@ -133,9 +133,9 @@ method NodetestNestingUnfoldingPrecondition$(this: Ref, x: Ref)
 
 method NodetestNestingUnfoldingPostcondition$(this: Ref, x: Ref)
   requires this != null
-  requires acc(Nodevalid$(this), write)
+  requires acc(Nodevalid$(this))
   //:: UnexpectedOutput(postcondition.violated:assertion.false, /Silicon/issue/154/)
-  ensures acc(Nodevalid$(this), write) && (unfolding acc(Nodevalid$(this), write) in true) && (this != NodegetNext$(this))
+  ensures acc(Nodevalid$(this)) && (unfolding acc(Nodevalid$(this)) in true) && (this != NodegetNext$(this))
 {
 }
 

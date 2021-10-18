@@ -10,11 +10,11 @@ predicate P(this: Ref) {
 }
 
 method branch(this: Ref)
-  requires acc(P(this), write)
+  requires acc(P(this))
 {
   assert
        (3 > 2)
-    && (unfolding acc(P(this), write)
+    && (unfolding acc(P(this))
           in (!this.b ? true : true))    // HERE
 }
 

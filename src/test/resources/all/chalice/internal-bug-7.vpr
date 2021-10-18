@@ -2,14 +2,14 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
   field n: Ref
-  predicate P(this: Ref) { acc(this.n, write) && (((this.n) != (null)) ==> acc(P(this.n), write)) }
+  predicate P(this: Ref) { acc(this.n) && (((this.n) != (null)) ==> acc(P(this.n))) }
   function length(this: Ref): Int
-    requires acc(P(this), write)
+    requires acc(P(this))
     ensures result >= 1
-  { (unfolding acc(P(this), write) in 1 + (((this.n) == (null)) ? 0 : length(this.n))) }
+  { (unfolding acc(P(this)) in 1 + (((this.n) == (null)) ? 0 : length(this.n))) }
   method test(this: Ref, node: Ref)
     requires ((node) != (null))
-    requires acc(P(node), write)
+    requires acc(P(node))
   {
     assert (length(node) >= 1)
     //assert (unfolding acc(node.P(), rd) in (((node.n) == (null))) ==> ((length(node)) == (1)))

@@ -22,7 +22,7 @@ function Nodecontains$(this$_4: Ref, i: Int): Bool
 }
 
 predicate Nodevalid$(this$_5: Ref) {
-  acc(this$_5.Nodenext$, write) && acc(this$_5.Nodevalue$, write) && ((this$_5.Nodenext$ != null) ==> acc(Nodevalid$(this$_5.Nodenext$), write))
+  acc(this$_5.Nodenext$) && acc(this$_5.Nodevalue$) && ((this$_5.Nodenext$ != null) ==> acc(Nodevalid$(this$_5.Nodenext$)))
 }
 
 method Nodeinit$(this: Ref, k$: Perm, v: Int)
@@ -30,11 +30,11 @@ method Nodeinit$(this: Ref, k$: Perm, v: Int)
   requires k$ > none
   requires write > k$
   requires acc(this.Nodenext$, write) && acc(this.Nodevalue$, write)
-  ensures acc(Nodevalid$(this), write) && (Nodesize$(this) == 1) && (forall y: Int :: true ==> (Nodecontains$(this, y) == (y == v)))
+  ensures acc(Nodevalid$(this)) && (Nodesize$(this) == 1) && (forall y: Int :: true ==> (Nodecontains$(this, y) == (y == v)))
 {
   this.Nodenext$ := null
   this.Nodevalue$ := v
-  fold acc(Nodevalid$(this), write)
+  fold acc(Nodevalid$(this))
 }
 
 //APPENDED PERMISSION MODEL

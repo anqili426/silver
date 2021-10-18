@@ -22,22 +22,22 @@ predicate valid2(self: Ref) {
 
 /* Originally reported problem */
 
-define RHS (acc(valid__Foo(x$1), write) &&
+define RHS (acc(valid__Foo(x$1)) &&
     (unfolding acc(valid__Foo(x$1), rd$1 / 2) in  x$1.Foo__v2.Int__v) ==
      old(unfolding acc(valid__Foo(x$1), rd$1 / 2) in  x$1.Foo__v2.Int__v))
 
 
 method test4(x$1: Ref, rd$1: Perm) returns (res$1: Ref)
   requires none < rd$1 && rd$1 < write
-  requires acc(valid__Foo(x$1), write)
+  requires acc(valid__Foo(x$1))
   ensures acc(res$1.Int__v, write)
   ensures acc(res$1.Int__v, write) --* RHS
 {
-    unfold acc(valid__Foo(x$1), write)
+    unfold acc(valid__Foo(x$1))
     res$1 := x$1.Foo__v1
 
   package (acc(res$1.Int__v, write)) --* RHS {
-      fold acc(valid__Foo(x$1), write)
+      fold acc(valid__Foo(x$1))
   }
 }
 

@@ -10,14 +10,14 @@ predicate Tree_valid(self: Ref) {
 }
 
 method Tree_work(_cthread: Ref, self: Ref, call_height: Int)
-  requires acc(Tree_valid(self), write)
-  requires (unfolding acc(Tree_valid(self), write) in self.Tree_height == call_height)
+  requires acc(Tree_valid(self))
+  requires (unfolding acc(Tree_valid(self)) in self.Tree_height == call_height)
   requires call_height > 0
   requires acc(MustTerminate(_cthread), 2 * write)
 {
   assert perm(MustTerminate(_cthread)) == 2 * write
-  exhale ((unfolding acc(Tree_valid(self), write) in self.Tree_height == call_height) &&
-          (acc(MustTerminate(_cthread), write)))
+  exhale ((unfolding acc(Tree_valid(self)) in self.Tree_height == call_height) &&
+          (acc(MustTerminate(_cthread))))
 
   assert perm(MustTerminate(_cthread)) == 1 * write 
   //:: ExpectedOutput(assert.failed:assertion.false)

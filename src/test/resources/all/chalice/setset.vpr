@@ -4,26 +4,26 @@
   field value: Int
   method init(this: Ref, v: Int)
     requires acc(this.value, write)
-    ensures acc(valid(this), write)
+    ensures acc(valid(this))
   {
     this.value := v
-    fold acc(valid(this), write)
+    fold acc(valid(this))
   }
   function get(this: Ref): Int
-    requires acc(valid(this), write)
-  { (unfolding acc(valid(this), write) in this.value) }
+    requires acc(valid(this))
+  { (unfolding acc(valid(this)) in this.value) }
   method set(this: Ref, v: Int)
-    requires acc(valid(this), write)
-    ensures acc(valid(this), write) && ((get(this)) == (v))
+    requires acc(valid(this))
+    ensures acc(valid(this)) && ((get(this)) == (v))
   {
-    unfold acc(valid(this), write)
+    unfold acc(valid(this))
     this.value := v
-    fold acc(valid(this), write)
+    fold acc(valid(this))
   }
   predicate valid(this: Ref) { acc(this.value, write) }
   method main(this: Ref, x: Ref, y: Ref)
     requires ((x) != (null)) && ((y) != (null))
-    requires acc(valid(x), write) && acc(valid(y), write)
+    requires acc(valid(x)) && acc(valid(y))
   {
     set(x, 3);
     set(y, 3);
@@ -32,18 +32,18 @@
     set(x, 3);
     set(y, 3);
     set(x, 3);
-    unfold acc(valid(x), write)
+    unfold acc(valid(x))
     x.value := 3
-    fold acc(valid(x), write)
+    fold acc(valid(x))
     set(y, 3);
     set(x, 3);
     set(y, 3);
-    unfold acc(valid(x), write)
+    unfold acc(valid(x))
     x.value := 3
-    fold acc(valid(x), write)
-    unfold acc(valid(x), write)
+    fold acc(valid(x))
+    unfold acc(valid(x))
     x.value := 3
-    fold acc(valid(x), write)
+    fold acc(valid(x))
     set(x, 3);
     set(y, 3);
     set(x, 4);

@@ -10,31 +10,31 @@ predicate P(this: Ref) {
 }
 
 method fail10(this: Ref)
-  requires acc(P(this), write)
-  ensures acc(P(this), write)
+  requires acc(P(this))
+  ensures acc(P(this))
   //:: ExpectedOutput(not.wellformed:insufficient.permission)
   ensures unfolding P(this) in this.x == old(this.x)
 {
 }
 
 method success10(this: Ref)
-  requires acc(P(this), write)
-  ensures acc(P(this), write)
+  requires acc(P(this))
+  ensures acc(P(this))
   ensures unfolding P(this) in this.x == old(unfolding P(this) in this.x)
 {
 }
 
 method success2(this: Ref)
   requires acc(this.x)
-  ensures acc(P(this), write)
+  ensures acc(P(this))
   ensures unfolding P(this) in this.x == old(this.x)
 {
   fold P(this)
 }
 
 method fail5(this: Ref)
-  requires acc(P(this), write)
-  ensures acc(P(this), write)
+  requires acc(P(this))
+  ensures acc(P(this))
   //:: ExpectedOutput(not.wellformed:insufficient.permission)
   ensures unfolding P(this) in this.x == old(this.x) + 1
 {
@@ -45,44 +45,44 @@ method fail5(this: Ref)
 
 method success5(this: Ref)
   requires this != null
-  requires acc(P(this), write)
-  ensures acc(P(this), write)
-  ensures (unfolding acc(P(this), write) in this.x == old((unfolding acc(P(this), write) in this.x)) + 1)
+  requires acc(P(this))
+  ensures acc(P(this))
+  ensures (unfolding acc(P(this)) in this.x == old((unfolding acc(P(this)) in this.x)) + 1)
 {
-  unfold acc(P(this), write)
+  unfold acc(P(this))
   this.x := this.x + 1
-  fold acc(P(this), write)
+  fold acc(P(this))
 }
 
 method success4(this: Ref)
   requires this != null
   requires acc(this.x, write)
-  ensures acc(P(this), write)
-  ensures (unfolding acc(P(this), write) in this.x == old(this.x) + 1)
+  ensures acc(P(this))
+  ensures (unfolding acc(P(this)) in this.x == old(this.x) + 1)
 {
   this.x := this.x + 1
-  fold acc(P(this), write)
+  fold acc(P(this))
 }
 
 method fail1(this: Ref)
   requires this != null
   requires acc(this.x, write)
-  ensures acc(P(this), write)
+  ensures acc(P(this))
   //:: ExpectedOutput(not.wellformed:insufficient.permission)
-  ensures (unfolding acc(P(this), write) in this.x == old((unfolding acc(P(this), write) in this.x)))
+  ensures (unfolding acc(P(this)) in this.x == old((unfolding acc(P(this)) in this.x)))
 {
-  fold acc(P(this), write)
+  fold acc(P(this))
 }
 
 method fail2(this: Ref)
   requires this != null
   requires acc(this.x, write)
-  ensures acc(P(this), write)
+  ensures acc(P(this))
   //:: ExpectedOutput(postcondition.violated:assertion.false)
-  ensures (unfolding acc(P(this), write) in this.x == old(this.x))
+  ensures (unfolding acc(P(this)) in this.x == old(this.x))
 {
   this.x := 0
-  fold acc(P(this), write)
+  fold acc(P(this))
 }
 
 //APPENDED PERMISSION MODEL

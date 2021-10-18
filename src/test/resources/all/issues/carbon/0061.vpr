@@ -27,15 +27,15 @@ predicate Consumervalid$(this: Ref) {
 
 method Producerinit$(this: Ref)
   requires this != null
-  ensures acc(Producervalid$(this), write)
+  ensures acc(Producervalid$(this))
 {
-  fold acc(Producervalid$(this), write)
+  fold acc(Producervalid$(this))
 }
 
 /*
 method Producerrun$(this: Ref, k$_2: Perm)
   requires this != null
-  requires acc(Producervalid$(this), write)
+  requires acc(Producervalid$(this))
 {
 }
 */
@@ -43,15 +43,15 @@ method Producerrun$(this: Ref, k$_2: Perm)
 method Consumerinit$(this: Ref)
   requires this != null
   requires acc(this.Consumerbuffer$, write)
-  ensures acc(Consumervalid$(this), write)
+  ensures acc(Consumervalid$(this))
 {
-  fold acc(Consumervalid$(this), write)
+  fold acc(Consumervalid$(this))
 }
 
 /*
 method Consumerrun$(this: Ref, k$_4: Perm)
   requires this != null
-  requires acc(Consumervalid$(this), write)
+  requires acc(Consumervalid$(this))
 {
 }
 */

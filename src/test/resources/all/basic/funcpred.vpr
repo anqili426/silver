@@ -15,16 +15,16 @@ function itemat(node: Ref, i: Int): Int
 predicate valid(this: Ref) {
     acc(this.next, write) &&
     acc(this.value, write) &&
-    ((this.next != null) ==> acc(valid(this.next), write))
+    ((this.next != null) ==> acc(valid(this.next)))
 }
 
 method a(this: Ref)
-    requires acc(valid(this), write) && acc(this.f, write)
-    ensures acc(valid(this), write)
+    requires acc(valid(this)) && acc(this.f, write)
+    ensures acc(valid(this))
 {
-    unfold acc(valid(this), write)
+    unfold acc(valid(this))
     this.value := 1
-    fold acc(valid(this), write)
+    fold acc(valid(this))
     void(this)
     assert itemat(this, 0) == 1
 }

@@ -3,17 +3,17 @@
 
   field value: Int
   field next: Ref
-  predicate valid(this: Ref) { acc(this.value, write) && acc(this.next, write) && (((this.next) != (null)) ==> acc(valid(this.next), write)) }
+  predicate valid(this: Ref) { acc(this.value) && acc(this.next) && (((this.next) != (null)) ==> acc(valid(this.next))) }
   method set(this: Ref, x: Int, y: Int)
-    requires acc(valid(this), write)
-    ensures acc(valid(this), write)
+    requires acc(valid(this))
+    ensures acc(valid(this))
   {
   }
   function itemAt(this: Ref, i: Int): Int
-    requires acc(valid(this), write) && 0 <= i
-  { (unfolding acc(valid(this), write) in (((i) == (0)) || ((this.next) == (null)) ? this.value : itemAt(this.next, i - 1))) }
+    requires acc(valid(this)) && 0 <= i
+  { (unfolding acc(valid(this)) in (((i) == (0)) || ((this.next) == (null)) ? this.value : itemAt(this.next, i - 1))) }
   method M(this: Ref, x: Ref, y: Ref)
-    requires ((x) != (null)) && ((y) != (null)) && ((x) != (y)) && acc(valid(x), write) && acc(valid(y), write)
+    requires ((x) != (null)) && ((y) != (null)) && ((x) != (y)) && acc(valid(x)) && acc(valid(y))
   {
     var i: Int := itemAt(x, 0)
     var j: Int := itemAt(y, 0)

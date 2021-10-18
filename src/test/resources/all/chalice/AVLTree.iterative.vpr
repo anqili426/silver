@@ -5,7 +5,7 @@ field root1 : Ref
 
 	predicate valid1(this: Ref) {
 		   acc(this.root1,write)
-		&& (this.root1!=null ==> acc(valid(this.root1),write))
+		&& (this.root1!=null ==> acc(valid(this.root1)))
 		&& (this.root1!=null ==> acc(this.root1.parent,write))
 		&& (this.root1!=null ==> this.root1.parent==null)
 		&& (this.root1!=null ==> acc(this.root1.root,1/2))
@@ -15,76 +15,76 @@ field root1 : Ref
 
 	method init(this: Ref)
 		requires acc(this.root1,write);
-		ensures acc(valid1(this),write);
+		ensures acc(valid1(this));
 	{
 		this.root1 := null;
-		fold acc(valid1(this),write);
+		fold acc(valid1(this));
 	}
 
 	method has(this:Ref, k : Int) returns (b : Bool)
-		requires acc(valid1(this),write);
-		ensures acc(valid1(this),write);
+		requires acc(valid1(this));
+		ensures acc(valid1(this));
 	{
 	var n : Ref
 	var end : Bool
 	var p : Ref
 	var q : Ref
 	var r : Ref
-		unfold acc(valid1(this),write);
+		unfold acc(valid1(this));
 		if (this.root1==null){
 			b := false;
-			fold acc(valid1(this),write);
+			fold acc(valid1(this));
 		}else{
 			n := this.root1
 			b := false;
 			end := false;
-			fold acc(udParentValid(n),write);
+			fold acc(udParentValid(n));
 			while (!end)
 				invariant acc(this.root1,write);
 				invariant this.root1 != null && acc(this.root1.parent,1/2);
 				invariant n!=null;
-				invariant acc(valid(n),write);
+				invariant acc(valid(n));
 				invariant acc(n.root,4/10);
-				invariant acc(udParentValid(n),write);
-				invariant unfolding acc(valid(n),write) in n.root==(this.root1);
+				invariant acc(udParentValid(n));
+				invariant unfolding acc(valid(n)) in n.root==(this.root1);
 				invariant this.root1!=null;
 			{
-				unfold acc(valid(n),write);
-				unfold acc(validRest(n),write);
+				unfold acc(valid(n));
+				unfold acc(validRest(n));
 
 				if (n.key==k){
 					b := true;
-					fold acc(validRest(n),write);
-					fold acc(valid(n),write);
+					fold acc(validRest(n));
+					fold acc(valid(n));
 					end := true;
 				}else{
 					if (n.key<k){
 						if (n.left==null){
 							end := true;
-							fold acc(validRest(n),write);
-							fold acc(valid(n),write);
+							fold acc(validRest(n));
+							fold acc(valid(n));
 						}else{
 							p := n;
-							unfold acc(leftValid(p),write);
+							unfold acc(leftValid(p));
 							n := p.left;
 							p.leftDown := true;
-							fold acc(leftOpen(p),write);
-							fold acc(udValid(p),write);
-							fold acc(udParentValid(n),write);
+							fold acc(leftOpen(p));
+							fold acc(udValid(p));
+							fold acc(udParentValid(n));
 						}
 					}else{
 						if (n.right==null){
 							end := true;
-							fold acc(validRest(n),write);
-							fold acc(valid(n),write);
+							fold acc(validRest(n));
+							fold acc(valid(n));
 						}else{
 							q := n;
-							unfold acc(rightValid(q),write);
+							unfold acc(rightValid(q));
 							n := q.right;
 							q.leftDown := false;
-							fold acc(rightOpen(q),write);
-							fold acc(udValid(q),write);
-							fold acc(udParentValid(n),write);
+							fold acc(rightOpen(q));
+							fold acc(udValid(q));
+							fold acc(udParentValid(n));
 						}
 					}
 				}
@@ -94,34 +94,34 @@ field root1 : Ref
 							invariant acc(this.root1,write);
 							invariant this.root1 != null && acc(this.root1.parent,1/2);
 							invariant n!=null;
-							invariant acc(valid(n),write);
-							invariant acc(udParentValid(n),write);
+							invariant acc(valid(n));
+							invariant acc(udParentValid(n));
 							invariant acc(n.root,4/10);
-							invariant unfolding acc(valid(n),write) in n.root==(this.root1);
+							invariant unfolding acc(valid(n)) in n.root==(this.root1);
 							invariant this.root1!=null;
-							invariant end==>unfolding acc(udParentValid(n),write) in n.parent==null;
+							invariant end==>unfolding acc(udParentValid(n)) in n.parent==null;
 						{
-							unfold acc(udParentValid(n),write);
+							unfold acc(udParentValid(n));
 							r := n.parent;
 							if (r==null){
 								end := true;
-								fold acc(udParentValid(n),write);
+								fold acc(udParentValid(n));
 							}else{
-								unfold acc(udValid(r),write);
+								unfold acc(udValid(r));
 								if (r.left==n){
-									unfold acc(leftOpen(r),write);
-									fold   acc(leftValid(r),write);
+									unfold acc(leftOpen(r));
+									fold   acc(leftValid(r));
 								}else{
-									unfold acc(rightOpen(r),write);
-									fold   acc(rightValid(r),write);
+									unfold acc(rightOpen(r));
+									fold   acc(rightValid(r));
 								}
-								fold acc(validRest(r),write);
-								fold acc(valid(r),write);
+								fold acc(validRest(r));
+								fold acc(valid(r));
 								n:=r;
 							}
 						}
-						unfold acc(udParentValid(n),write);
-						fold acc(valid1(this),write);
+						unfold acc(udParentValid(n));
+						fold acc(valid1(this));
 
 		}
 	}
@@ -141,9 +141,9 @@ field root1 : Ref
 	 field root : Ref
 
 	predicate valid(this: Ref){
-		   acc(validRest(this),write)
-		&& acc(leftValid(this),write)
-		&& acc(rightValid(this),write)
+		   acc(validRest(this))
+		&& acc(leftValid(this))
+		&& acc(rightValid(this))
 	}
 
 	predicate validRest(this: Ref){
@@ -158,7 +158,7 @@ field root1 : Ref
 	predicate rightValid(this: Ref){
 		   acc(this.right ,1/4)
 		&& acc(this.root,1/10)
-		&& (this.right!=null ==> acc(valid(this.right),write))
+		&& (this.right!=null ==> acc(valid(this.right)))
 		&& (this.right!=null ==> acc(this.right.parent,write))
 		&& (this.right!=null ==> this.right.parent==this)
 		&& (this.right!=null ==> acc(this.right.root,1/2))
@@ -167,7 +167,7 @@ field root1 : Ref
 	predicate leftValid(this: Ref){
 		   acc(this.left  ,1/4)
 		&& acc(this.root,1/10)
-		&& (this.left!=null ==> acc(valid(this.left),write))
+		&& (this.left!=null ==> acc(valid(this.left)))
 		&& (this.left!=null ==> acc(this.left.parent,write))
 		&& (this.left!=null ==> this.left.parent == this)
 		&& (this.left!=null ==> acc(this.left.root,1/2))
@@ -191,7 +191,7 @@ field root1 : Ref
 	predicate udParentValid(this: Ref) {
 		   acc(this.parent,1/2)
 		&& acc(this.root,1/10)
-		&& (this.parent!=null ==> acc(udValid(this.parent),write))
+		&& (this.parent!=null ==> acc(udValid(this.parent)))
 		&& (this.parent!=null ==> acc(this.parent.leftDown,1/2))
 		&& (this.parent!=null ==> acc(this.parent.left,1/2))
 		&& (this.parent!=null ==> ( this.parent.leftDown <==> this.parent.left==this))
@@ -208,11 +208,11 @@ field root1 : Ref
 		&& acc(this.left  ,1/4)
 		&& acc(this.right ,1/4)
 		&& acc(this.root ,1/5)
-		&& ( this.leftDown ==> acc(rightValid(this),write))
-		&& ( this.leftDown ==> acc(leftOpen(this),write)  )
-		&& ((this.leftDown ==> false) ==> acc(leftValid(this),write) )
-		&& ((this.leftDown ==> false) ==> acc(rightOpen(this),write) )
-		&& acc(udParentValid(this),write)
+		&& ( this.leftDown ==> acc(rightValid(this)))
+		&& ( this.leftDown ==> acc(leftOpen(this))  )
+		&& ((this.leftDown ==> false) ==> acc(leftValid(this)) )
+		&& ((this.leftDown ==> false) ==> acc(rightOpen(this)) )
+		&& acc(udParentValid(this))
 	}
 
 	method init_2(this:Ref, k : Int)
@@ -221,16 +221,16 @@ field root1 : Ref
 		requires acc(this.right ,write);
 		requires acc(this.leftDown ,write);
 		requires acc(this.root,     write);
-		ensures acc(valid(this),write);
+		ensures acc(valid(this));
 	{
 		this.left   := null;
 		this.right  := null;
 		this.key    := k;
 
-		fold acc(leftValid(this),write);
-		fold acc(rightValid(this),write);
-		fold acc(validRest(this),write);
-		fold acc(valid(this),write);
+		fold acc(leftValid(this));
+		fold acc(rightValid(this));
+		fold acc(validRest(this));
+		fold acc(valid(this));
 	}
 
 //APPENDED PERMISSION MODEL

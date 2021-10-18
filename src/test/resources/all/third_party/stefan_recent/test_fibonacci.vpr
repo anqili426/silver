@@ -17,7 +17,7 @@ method Fib__forkOperator(diz: Ref, current_thread_id: Int)
   requires current_thread_id >= 0
   requires acc(diz.Fib__input, 1 / 10)
   requires acc(diz.Fib__output, write)
-  ensures acc(Fib__joinToken(diz), write)
+  ensures acc(Fib__joinToken(diz))
 {
   inhale false
 }
@@ -25,7 +25,7 @@ method Fib__forkOperator(diz: Ref, current_thread_id: Int)
 method Fib__joinOperator(diz: Ref, current_thread_id: Int)
   requires diz != null
   requires current_thread_id >= 0
-  requires acc(Fib__joinToken(diz), write)
+  requires acc(Fib__joinToken(diz))
   ensures acc(diz.Fib__input, 1 / 10)
   ensures acc(diz.Fib__output, write)
   ensures diz.Fib__output == Fib__fib(diz.Fib__input)

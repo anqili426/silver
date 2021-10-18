@@ -8,15 +8,15 @@ predicate Tree_valid(self: Ref) {
 }
 
 method callee(self: Ref)
-  requires acc(Tree_valid(self), write)
-  requires (unfolding acc(Tree_valid(self), write) in self.Tree_height == 0)
+  requires acc(Tree_valid(self))
+  requires (unfolding acc(Tree_valid(self)) in self.Tree_height == 0)
 {
 }
 
 method test(self: Ref)
-  requires acc(Tree_valid(self), write)
+  requires acc(Tree_valid(self))
 {
-    unfold acc(Tree_valid(self), write)
+    unfold acc(Tree_valid(self))
     //:: ExpectedOutput(call.precondition:insufficient.permission)
     callee(self)
 }
