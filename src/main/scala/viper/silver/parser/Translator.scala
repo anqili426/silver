@@ -408,7 +408,7 @@ case class Translator(program: PProgram) {
             }
           case _: Predicate =>
             val inner = PredicateAccess(args map exp, findPredicate(func).name) (pos)
-            val fullPerm = FullPerm()(pos)
+            val fullPerm = IdScal()(pos)
             PredicateAccessPredicate(inner, fullPerm) (pos)
           case _ => sys.error("unexpected reference to non-function")
         }
