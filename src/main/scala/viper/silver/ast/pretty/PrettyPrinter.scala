@@ -482,6 +482,7 @@ object FastPrettyPrinter extends FastPrettyPrinterBase with BracketPrettyPrinter
     case p: Program => showProgram(p)
     case m: Member => showMember(m)
     case v: LocalVarDecl => showVar(v)
+    case UnnamedLocalVarDecl(typ) => showType(typ)
     case dm: DomainMember => showDomainMember(dm)
     case Trigger(exps) =>
       text("{") <+> ssep(exps map show, char (',')) <+> "}"
