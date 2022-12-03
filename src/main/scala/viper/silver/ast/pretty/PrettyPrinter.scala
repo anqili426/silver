@@ -524,8 +524,8 @@ object FastPrettyPrinter extends FastPrettyPrinterBase with BracketPrettyPrinter
   /** Show a program member. */
   def showMember(m: Member): Cont = {
     val memberDoc = m match {
-      case Field(name, typ) =>
-        text("field") <+> name <> ":" <+> show(typ)
+      case Field(permId, name, typ) =>
+        text("field") <+> "[" <> permId <> "] " <> name <> ":" <+> show(typ)
       case Method(name, formalArgs, formalReturns, pres, posts, body) =>
         text("method") <+> name <> parens(showVars(formalArgs)) <> {
           if (formalReturns.isEmpty) nil

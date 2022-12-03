@@ -309,7 +309,7 @@ trait Hashable extends Node {
 // --- Program members
 
 /** A field declaration. */
-case class Field(name: String, typ: Type)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends Location with Typed {
+case class Field(permId: String, name: String, typ: Type)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends Location with Typed {
   override lazy val check : Seq[ConsistencyError] =
     if(!typ.isConcrete) Seq(ConsistencyError(s"Type of field $name must be concrete, but found $typ.", pos)) else Seq()
 

@@ -1208,7 +1208,7 @@ case class PFunction(idndef: PIdnDef, formalArgs: Seq[PFormalArgDecl], typ: PTyp
 
 case class PDomainFunction(idndef: PIdnDef, formalArgs: Seq[PAnyFormalArgDecl], typ: PType, unique: Boolean)(val domainName:PIdnUse)(val pos: (Position, Position)) extends PAnyFunction
 case class PAxiom(idndef: Option[PIdnDef], exp: PExp)(val domainName:PIdnUse)(val pos: (Position, Position)) extends PScope
-case class PField(permId: Option[PIdnDef], idndef: PIdnDef, typ: PType)(val pos: (Position, Position)) extends PMember with PTypedDeclaration with PGlobalDeclaration
+case class PField(permId: Option[PIdnUse], idndef: PIdnDef, typ: PType)(val pos: (Position, Position)) extends PMember with PTypedDeclaration with PGlobalDeclaration
 case class PPredicate(idndef: PIdnDef, formalArgs: Seq[PFormalArgDecl], body: Option[PExp])(val pos: (Position, Position) = (NoPosition, NoPosition)) extends PMember with PTypedDeclaration with PGlobalDeclaration{
   val typ = PPredicateType()()
 }

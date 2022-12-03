@@ -31,7 +31,7 @@ object Nodes {
         domains ++ fields ++ functions ++ predicates ++ methods ++ extensions
       case m: Member =>
         m match {
-          case Field(_, _) => Nil
+          case Field(_, _, _) => Nil
           case Function(_, formalArgs, _, pres, posts, body) =>
             formalArgs ++ pres ++ posts ++ body
           case Method(_, formalArgs, formalReturns, pres, posts, body) =>

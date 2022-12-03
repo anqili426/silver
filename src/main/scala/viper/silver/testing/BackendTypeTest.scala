@@ -24,7 +24,7 @@ trait BackendTypeTest extends FunSuite with Matchers with BeforeAndAfterAllConfi
 
   def generateFieldTypeTest(success: Boolean) : (Program, Assert) = {
     val t = if (!success) BVFactory(23).typ else FloatFactory(23, 11, RoundingMode.RNE).typ
-    val field = Field("f", t)()
+    val field = Field("default", "f", t)()
     val p1_decl = LocalVarDecl("three", Ref)()
     val p1_ref = p1_decl.localVar
     val p2_decl = LocalVarDecl("lol", SetType(t))()
@@ -127,7 +127,7 @@ trait BackendTypeTest extends FunSuite with Matchers with BeforeAndAfterAllConfi
     val bv64 = BVFactory(64)
     val from_int = bv64.from_int("toBV64")
     val to_fp = fp.from_bv("tofp")
-    val field = Field("val_float", fp.typ)()
+    val field = Field("default", "val_float", fp.typ)()
     val selfVar = LocalVarDecl("self", Ref)()
     val fieldAcc = FieldAccess(selfVar.localVar, field)()
     val fieldAccPred = FieldAccessPredicate(fieldAcc, FullPerm()())()

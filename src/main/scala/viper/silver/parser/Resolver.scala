@@ -127,6 +127,9 @@ case class TypeChecker(names: NameAnalyser) {
     checkMember(f) {
       check(f.typ)
     }
+    if (!f.permId.isEmpty) {
+      checkIsPermModel(f.permId.get, "expected a permission model")
+    }
   }
 
   def checkFunctions(d: PDomain): Unit = {
@@ -328,6 +331,19 @@ case class TypeChecker(names: NameAnalyser) {
         case None =>
           messages ++= FastMessaging.message(use, errorMessage)
       }
+    }
+  }
+
+  def checkIsPermModel(id: PIdnUse, errorMessage: String):Unit = {
+    val acceptedClasses = Seq[Class[_]](classTag[PDomain].runtimeClass)
+    val decl = names.definition(curMember)(id)
+    acceptedClasses.find(_.isInstance(decl)) match {
+      case Some(_) =>
+        if (!id.name.startsWith("_Perm")) {
+          messages ++= FastMessaging.message(id, errorMessage)
+        }
+      case None =>
+        messages ++= FastMessaging.message(id, errorMessage)
     }
   }
 
