@@ -1202,8 +1202,9 @@ object FastParser {
 
   def axiomDecl[_: P]: P[PAxiom1] = FP(keyword("axiom") ~ idndef.? ~ "{" ~ exp ~ "}" ~ ";".?).map { case (pos, (_, _, a, b)) => PAxiom1(a, b)(pos) }
 
-  def fieldDecl[_: P]: P[PField] = FP(keyword("field") ~/ idndef ~ ":" ~ typ ~ ";".?).map {
-    case (pos, (start, finish, a, b)) => PField(a, b)(pos)
+  //  Edit here: add ("[" ~ permId ~ "]")
+  def fieldDecl[_: P]: P[PField] = FP(keyword("field") ~ ("[" ~/ idndef ~ "]").? ~/ idndef ~ ":" ~ typ ~ ";".?).map {
+    case (pos, (_, _, a, b, c)) => PField(a, b, c)(pos)
   }
 
   def functionDecl[_: P]: P[PFunction] = FP("function" ~/ idndef ~ "(" ~ formalArgList ~ ")" ~ ":" ~ typ ~ pre.rep ~

@@ -127,7 +127,7 @@ case class Translator(program: PProgram) {
     val pos = p
     val name = p.idndef.name
     val t = p match {
-      case PField(_, typ) =>
+      case PField(_, _, typ) =>
         Field(name, ttyp(typ))(pos)
       case PFunction(_, formalArgs, typ, _, _, _) =>
         Function(name, formalArgs map liftVarDecl, ttyp(typ), null, null, null)(pos)

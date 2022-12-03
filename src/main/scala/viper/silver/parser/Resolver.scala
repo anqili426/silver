@@ -203,7 +203,7 @@ case class TypeChecker(names: NameAnalyser) {
         acceptAndCheckTypedEntity[PLocalVarDecl, PFormalArgDecl](Seq(target), msg){(v, _) => check(v, Ref)}
         fields foreach (_.foreach (field =>
           names.definition(curMember)(field) match {
-            case PField(_, typ) =>
+            case PField(_, _, typ) =>
               check(field, typ)
             case _ =>
               messages ++= FastMessaging.message(stmt, "expected a field as argument")
@@ -231,7 +231,7 @@ case class TypeChecker(names: NameAnalyser) {
       case PGoto(_) =>
       case PFieldAssign(field, rhs) =>
         names.definition(curMember)(field.idnuse, Some(PField.getClass)) match {
-          case PField(_, typ) =>
+          case PField(_, _, typ) =>
             check(field, typ)
             check(rhs, typ)
           case _ =>
@@ -693,7 +693,7 @@ case class TypeChecker(names: NameAnalyser) {
         names.definition(curMember)(piu) match {
           case decl @ PLocalVarDecl(_, typ, _) => setPIdnUseTypeAndEntity(piu, typ, decl)
           case decl @ PFormalArgDecl(_, typ) => setPIdnUseTypeAndEntity(piu, typ, decl)
-          case decl @ PField(_, typ) => setPIdnUseTypeAndEntity(piu, typ, decl)
+          case decl @ PField(_, _, typ) => setPIdnUseTypeAndEntity(piu, typ, decl)
           case decl @ PPredicate(_, _, _) => setPIdnUseTypeAndEntity(piu, Pred, decl)
           case x => issueError(piu, s"expected identifier, but got $x")
         }

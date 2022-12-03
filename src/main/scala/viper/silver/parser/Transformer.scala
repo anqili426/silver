@@ -148,7 +148,7 @@ object Transformer {
         case p@PStandardImport(file) => PStandardImport(file)(p.pos)
         case p@PMethod(idndef, formalArgs, formalReturns, pres, posts, body) => PMethod(go(idndef), formalArgs map go, formalReturns map go, pres map go, posts map go, body map go)(p.pos)
         case p@PDomain(idndef, typVars, funcs, axioms) => PDomain(go(idndef), typVars map go, funcs map go, axioms map go)(p.pos)
-        case p@PField(idndef, typ) => PField(go(idndef), go(typ))(p.pos)
+        case p@PField(permId, idndef, typ) => PField(permId map go, go(idndef), go(typ))(p.pos)
         case p@PFunction(idndef, formalArgs, typ, pres, posts, body) => PFunction(go(idndef), formalArgs map go, go(typ), pres map go, posts map go, body map go)(p.pos)
         case pdf@PDomainFunction(idndef, formalArgs, typ, unique) => PDomainFunction(go(idndef), formalArgs map go, go(typ), unique)(domainName = pdf.domainName)(pdf.pos)
         case p@PPredicate(idndef, formalArgs, body) => PPredicate(go(idndef), formalArgs map go, body map go)(p.pos)
