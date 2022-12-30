@@ -339,8 +339,13 @@ case class TypeChecker(names: NameAnalyser) {
     val decl = names.definition(curMember)(id)
     acceptedClasses.find(_.isInstance(decl)) match {
       case Some(_) =>
-        if (!id.name.startsWith("_Perm")) {
+        if (!id.name.startsWith("_Perm_")) {
           messages ++= FastMessaging.message(id, errorMessage)
+        } else {
+          val id_suffix = id.name
+          if (id_suffix.replaceFirst("^_Perm_", "").length == 0) {
+            messages ++= FastMessaging.message(id, errorMessage)
+          }
         }
       case None =>
         messages ++= FastMessaging.message(id, errorMessage)
@@ -483,7 +488,9 @@ case class TypeChecker(names: NameAnalyser) {
     case t: PExtender => t.typecheck(this, names).getOrElse(Nil) foreach (message =>
       messages ++= FastMessaging.message(t, message))
 
-    case _ => checkTopTyped(exp, Some(expected))}
+
+    case _ =>
+      checkTopTyped(exp, Some(expected))}
 
   def checkTopTyped(exp: PExp, oexpected: Option[PType]): Unit =
   {
@@ -695,8 +702,12 @@ case class TypeChecker(names: NameAnalyser) {
                 )
               )
               val ts = poa.typeSubstitutions.distinct
-              if (ts.isEmpty)
+              if (ts.isEmpty) {
+                // TODO: check type of permission here!!!
+//                println(poa.typeSubstitutions.toString())
+//                println("here****************")
                 typeError(poa)
+              }
               poa.typ = if (ts.size == 1) rrt.substitute(ts.head) else rrt
             } else {
               poa.typeSubstitutions.clear()
