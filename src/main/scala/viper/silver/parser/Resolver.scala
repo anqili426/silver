@@ -37,6 +37,7 @@ case class TypeChecker(names: NameAnalyser) {
 
   import TypeHelper._
 
+
   var curMember: PScope = null
   var curFunction: PFunction = null
   var resultAllowed : Boolean = false
@@ -339,11 +340,11 @@ case class TypeChecker(names: NameAnalyser) {
     val decl = names.definition(curMember)(id)
     acceptedClasses.find(_.isInstance(decl)) match {
       case Some(_) =>
-        if (!id.name.startsWith("_Perm_")) {
+        if (!id.name.startsWith(names.permDomainPrefix)) {
           messages ++= FastMessaging.message(id, errorMessage)
         } else {
           val id_suffix = id.name
-          if (id_suffix.replaceFirst("^_Perm_", "").length == 0) {
+          if (id_suffix.replaceFirst(("^" + names.permDomainPrefix), "").length == 0) {
             messages ++= FastMessaging.message(id, errorMessage)
           }
         }
@@ -701,11 +702,9 @@ case class TypeChecker(names: NameAnalyser) {
                   }
                 )
               )
+
               val ts = poa.typeSubstitutions.distinct
               if (ts.isEmpty) {
-                // TODO: check type of permission here!!!
-//                println(poa.typeSubstitutions.toString())
-//                println("here****************")
                 typeError(poa)
               }
               poa.typ = if (ts.size == 1) rrt.substitute(ts.head) else rrt
@@ -776,7 +775,8 @@ case class NameAnalyser() {
 
   /** To record error messages */
   var messages : FastMessaging.Messages = Nil
-
+  val permDomainPrefix = "_Perm_"
+  val permDomainFuncs = List("unit", "full", "plus", "minus", "geq", "joinable")
 
   /** Resolves the entity to which the given identifier `idnuse` refers.
     *
@@ -867,7 +867,17 @@ case class NameAnalyser() {
           case d: PDeclaration =>
             getMap(d).get(d.idndef.name) match {
               case Some(e: PDeclaration) =>
-                messages ++= FastMessaging.message(e.idndef, "Duplicate identifier `" + e.idndef.name + "' at " + e.idndef.pos._1 + " and at " + d.idndef.pos._1)
+                var allowDup = false
+                // Duplicate domain function declaration is allowed for permission domains
+                if (d.isInstanceOf[PDomainFunction] && e.isInstanceOf[PDomainFunction]) {
+                  val dParentDomain = d.parent.getOrElse(null)
+                  val eParentDomain = e.parent.getOrElse(null)
+                  allowDup = (dParentDomain != null && eParentDomain != null
+                    && dParentDomain.asInstanceOf[PDomain].idndef.name.startsWith(permDomainPrefix)
+                    && eParentDomain.asInstanceOf[PDomain].idndef.name.startsWith(permDomainPrefix)
+                    && permDomainFuncs.contains(d.idndef.name))
+                }
+                if (!allowDup) messages ++= FastMessaging.message(e.idndef, "Duplicate identifier `" + e.idndef.name + "' at " + e.idndef.pos._1 + " and at " + d.idndef.pos._1)
               case Some(_: PErrorEntity) =>
               case None =>
                 globalDeclarationMap.get(d.idndef.name) match {

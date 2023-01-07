@@ -11,6 +11,7 @@ import utility.{Consistency, DomainInstances, Nodes, Types, Visitor}
 import viper.silver.ast.MagicWandStructure.MagicWandStructure
 import viper.silver.ast.utility.rewriter.StrategyBuilder
 import viper.silver.cfg.silver.{CfgGenerator, SilverCfg}
+import viper.silver.parser.NameAnalyser
 import viper.silver.verifier.ConsistencyError
 import viper.silver.utility.{CacheHelper, DependencyAware}
 
@@ -191,9 +192,10 @@ case class Program(domains: Seq[Domain], fields: Seq[Field], functions: Seq[Func
       currentScope.scopedDecls.foreach(l=> {
         if(!Consistency.validUserDefinedIdentifier(l.name))
           s :+= ConsistencyError(s"${l.name} is not a valid identifier.", l.pos)
-
         declarationMap.get(l.name) match {
-          case Some(_: Declaration) => s :+= ConsistencyError(s"Duplicate identifier ${l.name} found.", l.pos)
+          case Some(e: Declaration) =>
+            val allowDup = e.isInstanceOf[DomainFunc] && NameAnalyser().permDomainFuncs.contains(e.name)
+            if (!allowDup) s :+= ConsistencyError(s"Duplicate identifier ${l.name} found.", l.pos)
           case None => declarationMap += (l.name -> l)
         }
       })
