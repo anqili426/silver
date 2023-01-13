@@ -272,8 +272,12 @@ object AccessPredicate {
 
 /** An accessibility predicate for a field location. */
 case class FieldAccessPredicate(loc: FieldAccess, perm: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends AccessPredicate {
-  override lazy val check : Seq[ConsistencyError] =
-    if(!(perm isSubtype Perm)) Seq(ConsistencyError(s"Permission amount parameter of access predicate must be of Perm type, but found ${perm.typ}", perm.pos)) else Seq()
+  override lazy val check : Seq[ConsistencyError] = {
+    val expectedType = if (loc.permId == "Fractions") "Perm" else loc.permId
+    var permTypeCheck = (loc.permId == "Fractions" && (perm isSubtype Perm)) ||
+      (loc.permId != "Fractions" && perm.typ.isInstanceOf[DomainType] && loc.permId == perm.typ.toString())
+    if (!permTypeCheck) Seq(ConsistencyError(s"Permission amount parameter of access predicate must be of ${expectedType} type, but found ${perm.typ}", perm.pos)) else Seq()
+  }
   val typ: Bool.type = Bool
 }
 

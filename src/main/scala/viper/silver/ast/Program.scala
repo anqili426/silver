@@ -194,8 +194,7 @@ case class Program(domains: Seq[Domain], fields: Seq[Field], functions: Seq[Func
           s :+= ConsistencyError(s"${l.name} is not a valid identifier.", l.pos)
         declarationMap.get(l.name) match {
           case Some(e: Declaration) =>
-            val allowDup = e.isInstanceOf[DomainFunc] && NameAnalyser().permDomainFuncs.contains(e.name)
-            if (!allowDup) s :+= ConsistencyError(s"Duplicate identifier ${l.name} found.", l.pos)
+            s :+= ConsistencyError(s"Duplicate identifier ${l.name} found.", l.pos)
           case None => declarationMap += (l.name -> l)
         }
       })

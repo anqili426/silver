@@ -808,9 +808,13 @@ case class PAmbiWildcard()(val pos: (Position, Position)) extends PExp { //ambig
 case class PEpsilon()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}
 case class PAccPred(loc: PLocationAccess, perm: PExp)(val pos: (Position, Position)) extends POpApp {
   override val opName = "acc"
-  override val signatures : List[PTypeSubstitution] = List(
-    Map(POpApp.pArgS(1) -> (if (loc.isInstanceOf[PFieldAccess]) Perm else Scalar),POpApp.pResS -> Bool))
+  // The signatures are now set during type checking, where the permission model used by the field can be determined
+  var signatures : List[PTypeSubstitution] = List()
+    // List[PTypeSubstitution] = List(Map(POpApp.pArgS(1) -> (if (loc.isInstanceOf[PFieldAccess]) Perm else Scalar), POpApp.pResS -> Bool))
   override val args = Seq(loc,perm)
+  def setSignatures(typ: PType): Unit = {
+    signatures = List(Map(POpApp.pArgS(1) -> typ, POpApp.pResS -> Bool))
+  }
 }
 
 sealed trait POldExp extends PHeapOpApp {

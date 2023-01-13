@@ -335,6 +335,22 @@ case class TypeChecker(names: NameAnalyser) {
     }
   }
 
+  //TODO: refactor this
+  def getFieldPermType(fieldId: PIdnUse, exp: PExp): PType = {
+    val acceptedClasses = Seq[Class[_]](classTag[PField].runtimeClass)
+    val decl = names.definition(curMember)(fieldId)
+    acceptedClasses.find(_.isInstance(decl)) match {
+      case Some(_) =>
+        val permId = decl.asInstanceOf[PField].permId
+        if (!permId.isEmpty && permId.get.name == exp.typ.toString) exp.typ
+        else Perm
+      case None =>
+        messages ++= FastMessaging.message(fieldId, "Field undefined.")
+        Perm
+    }
+  }
+
+  //TODO: refactor this
   def checkIsPermModel(id: PIdnUse, errorMessage: String):Unit = {
     val acceptedClasses = Seq[Class[_]](classTag[PDomain].runtimeClass)
     val decl = names.definition(curMember)(id)
@@ -664,10 +680,12 @@ case class TypeChecker(names: NameAnalyser) {
                 acceptAndCheckTypedEntity[PField, Nothing](Seq(idnuse), "expected field")(
                   (id, _) => checkInternal(id))
 
-              case PAccPred(loc, _) =>
+              case PAccPred(loc, perm) =>
                 loc match {
-                  case PFieldAccess(_, _) =>
+                  case PFieldAccess(_, id) =>
+                    poa.asInstanceOf[PAccPred].setSignatures(getFieldPermType(id, perm))
                   case pc: PCall if pc.extfunction != null =>
+                    poa.asInstanceOf[PAccPred].setSignatures(Scalar)
                   case _ =>
                     issueError(loc, "specified location is not a field nor a predicate")
                 }
@@ -867,17 +885,7 @@ case class NameAnalyser() {
           case d: PDeclaration =>
             getMap(d).get(d.idndef.name) match {
               case Some(e: PDeclaration) =>
-                var allowDup = false
-                // Duplicate domain function declaration is allowed for permission domains
-                if (d.isInstanceOf[PDomainFunction] && e.isInstanceOf[PDomainFunction]) {
-                  val dParentDomain = d.parent.getOrElse(null)
-                  val eParentDomain = e.parent.getOrElse(null)
-                  allowDup = (dParentDomain != null && eParentDomain != null
-                    && dParentDomain.asInstanceOf[PDomain].idndef.name.startsWith(permDomainPrefix)
-                    && eParentDomain.asInstanceOf[PDomain].idndef.name.startsWith(permDomainPrefix)
-                    && permDomainFuncs.contains(d.idndef.name))
-                }
-                if (!allowDup) messages ++= FastMessaging.message(e.idndef, "Duplicate identifier `" + e.idndef.name + "' at " + e.idndef.pos._1 + " and at " + d.idndef.pos._1)
+                messages ++= FastMessaging.message(e.idndef, "Duplicate identifier `" + e.idndef.name + "' at " + e.idndef.pos._1 + " and at " + d.idndef.pos._1)
               case Some(_: PErrorEntity) =>
               case None =>
                 globalDeclarationMap.get(d.idndef.name) match {
