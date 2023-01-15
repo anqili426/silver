@@ -883,6 +883,25 @@ case class NameAnalyser() {
           namesInScope ++= getCurrentMap.map(_._1)
         n match {
           case d: PDeclaration =>
+            if (d.isInstanceOf[PAnyFunction]) {
+              // Check whether the function uses any of the names reserved for functions in permission domains
+              val funcName = d.asInstanceOf[PAnyFunction].idndef.name
+              val funcNamePrefix = permDomainFuncs.find(prefix => funcName.startsWith(prefix)).getOrElse(null)
+              if (funcNamePrefix != null) {
+                val errorMessage = "Function declared with name " + funcNamePrefix + " reserved for permission domains."
+                d match {
+                  case pdf@PDomainFunction(_, _, _, _) =>
+                    val domain = pdf.parent.get.asInstanceOf[PDomain]
+                    if (!domain.idndef.name.startsWith(permDomainPrefix))
+                      messages ++= FastMessaging.message(d.idndef, errorMessage)
+                    else if (domain.funcs.exists(p => p.idndef.name != funcName && p.idndef.name.startsWith(funcNamePrefix))) {
+                      messages ++= FastMessaging.message(d.idndef, "Duplicate " + funcNamePrefix + " function declaration in domain " + domain.idndef.name)
+                    }
+                  case _ => messages ++= FastMessaging.message(d.idndef,  errorMessage)
+                }
+              }
+            }
+
             getMap(d).get(d.idndef.name) match {
               case Some(e: PDeclaration) =>
                 messages ++= FastMessaging.message(e.idndef, "Duplicate identifier `" + e.idndef.name + "' at " + e.idndef.pos._1 + " and at " + d.idndef.pos._1)
