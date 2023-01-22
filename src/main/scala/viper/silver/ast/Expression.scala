@@ -66,9 +66,10 @@ case class GeCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info
 
 // Equality and non-equality (defined for all types)
 case class EqCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends EqualityCmp("==") {
-  override lazy val check : Seq[ConsistencyError] =
+  override lazy val check : Seq[ConsistencyError] = {
     Seq(left, right).flatMap(Consistency.checkPure) ++
     (if(left.typ != right.typ) Seq(ConsistencyError(s"expected the same type, but got ${left.typ} and ${right.typ}", left.pos)) else Seq())
+  }
 }
 case class NeCmp(left: Exp, right: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends EqualityCmp("!=") {
   override lazy val check : Seq[ConsistencyError] =
@@ -305,7 +306,7 @@ case class InhaleExhaleExp(in: Exp, ex: Exp)(val pos: Position = NoPosition, val
 
 /** A common trait for expressions of type permission. */
 sealed trait PermExp extends Exp {
-  override lazy val typ = Perm
+  override lazy val typ: Type = Perm
 }
 
 /** A common trait for expressions of type rational */
@@ -381,7 +382,9 @@ case class RatioDiv(left: Exp, right: Exp)(val pos: Position = NoPosition, val i
 }
 
 /** The permission currently held for a given resource. */
-case class CurrentPerm(res: ResourceAccess)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends PermExp
+case class CurrentPerm(res: ResourceAccess)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos, val permType: Type = Perm) extends PermExp {
+  override lazy val typ : Type = permType
+}
 
 // Arithmetic expressions
 case class PermMinus(exp: Exp)(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends DomainUnExp(PermNegOp) with PermExp

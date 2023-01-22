@@ -50,7 +50,6 @@ case class Translator(program: PProgram) {
 
         finalProgram.deepCollect {case fp: ForPerm => Consistency.checkForPermArguments(fp, finalProgram)}
         finalProgram.deepCollect {case trig: Trigger => Consistency.checkTriggers(trig, finalProgram)}
-
         if (Consistency.messages.isEmpty) Some(finalProgram) // all error messages generated during translation should be Consistency messages
         else None
     }
@@ -459,7 +458,10 @@ case class Translator(program: PProgram) {
       case PCurPerm(res) =>
         exp(res) match {
           case PredicateAccessPredicate(inner, _) => CurrentPerm(inner)(pos)
-          case x: FieldAccess => CurrentPerm(x)(pos)
+          case x: FieldAccess =>
+            val permType = FastParser.permTypeMap.get(x.permId).getOrElse(null)
+            if (permType != null) CurrentPerm(x)(pos=pos, permType=ttyp(permType))
+            else CurrentPerm(x)(pos)
           case x: PredicateAccess => CurrentPerm(x)(pos)
           case x: MagicWand => CurrentPerm(x)(pos)
           case other => sys.error(s"Unexpectedly found $other")

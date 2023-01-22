@@ -32,6 +32,9 @@ object FastParser {
       NoTrace((("/*" ~ (!StringIn("*/") ~ AnyChar).rep ~ "*/") | ("//" ~ CharsWhile(_ != '\n').? ~ ("\n" | End)) | " " | "\t" | "\n" | "\r").rep)
   }
 
+  var permTypeMap: Map[String, PDomainType] = Map()
+  val permDomainPrefix: String = "_Perm_"
+
   // As opposed to use Index ~ t ~ Index, this implementation is agnostic to white space specializations.
   def FP[T](t: P[T])(implicit name: sourcecode.Name, ctx: P[_]): P[((FilePosition, FilePosition), T)] = {
     t ~ Index map {
@@ -963,11 +966,17 @@ object FastParser {
   def typ[_: P]: P[PType] = P(primitiveTyp | domainTyp | seqType | setType | multisetType | mapType)
   // Maps: lazy val typ: P[PType] = P(primitiveTyp | domainTyp | seqType | setType | multisetType | mapType)
 
-  def domainTyp[_: P]: P[PDomainType] = P(FP(idnuse ~ "[" ~ typ.rep(sep = ",") ~ "]").map { case (pos, (a, b)) => PDomainType(a, b)(pos) } |
-    // domain type without type arguments (might also be a type variable)
+  def domainTyp[_: P]: P[PDomainType] = {
+    P(FP(idnuse ~ "[" ~ typ.rep(sep = ",") ~ "]").map { case (pos, (a, b)) => PDomainType(a, b)(pos) }) |
+      // domain type without type arguments (might also be a type variable)
     idnuse.map(name => {
-      PDomainType(name, Nil)(name.pos)
-    }))
+      val domainType = PDomainType(name, Nil)(name.pos)
+      if (name.name.startsWith(permDomainPrefix)) {
+        permTypeMap += (name.name -> domainType)
+      }
+      domainType
+    })
+  }
 
   def seqType[_: P]: P[PType] = FP(keyword("Seq") ~ "[" ~ typ ~ "]").map{ case (pos, t) => PSeqType(t._3)(pos)}
 

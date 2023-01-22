@@ -787,9 +787,11 @@ case class PInhaleExhaleExp(in: PExp, ex: PExp)(val pos: (Position, Position)) e
 case class PCurPerm(res: PResourceAccess)(val pos: (Position, Position)) extends PHeapOpApp{
   override val opName = "#perm"
   override val args = Seq(res)
-  val signatures : List[PTypeSubstitution] = List(
-    Map(POpApp.pResS -> Perm)
-  )
+  var signatures : List[PTypeSubstitution] = List(Map(POpApp.pResS -> Perm))
+
+  def setSignatures(typ: PType): Unit = {
+    signatures = List(Map(POpApp.pResS -> typ))
+  }
 }
 
 case class PNoPerm()(val pos: (Position, Position)) extends PSimpleLiteral{typ = Perm}

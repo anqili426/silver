@@ -335,19 +335,41 @@ case class TypeChecker(names: NameAnalyser) {
     }
   }
 
-  //TODO: refactor this
-  def getFieldPermType(fieldId: PIdnUse, exp: PExp): PType = {
-    val acceptedClasses = Seq[Class[_]](classTag[PField].runtimeClass)
-    val decl = names.definition(curMember)(fieldId)
-    acceptedClasses.find(_.isInstance(decl)) match {
-      case Some(_) =>
-        val permId = decl.asInstanceOf[PField].permId
-        if (!permId.isEmpty && permId.get.name == exp.typ.toString) exp.typ
-        else Perm
-      case None =>
-        messages ++= FastMessaging.message(fieldId, "Field undefined.")
-        Perm
+  def updateSignatures(poa: POpApp) = {
+
+    def setCurPermSignatures(curPerm: PCurPerm) = {
+      val resAcc = curPerm.res
+      if (resAcc.isInstanceOf[PFieldAccess]) {
+        val field = resAcc.asInstanceOf[PFieldAccess].idnuse
+        val permType = getFieldPermType(field)
+        curPerm.setSignatures(permType)
+      }
     }
+
+    poa match {
+      case PBinExp(exp, op, exp1) =>
+        op match {
+          case "==" =>
+            if (exp.isInstanceOf[PCurPerm]) setCurPermSignatures(exp.asInstanceOf[PCurPerm])
+            if (exp1.isInstanceOf[PCurPerm]) setCurPermSignatures(exp1.asInstanceOf[PCurPerm])
+          case _ =>
+        }
+      case cp@PCurPerm(_) =>
+        setCurPermSignatures(cp)
+      case ap@PAccPred(loc, _) =>
+        loc match {
+          case PFieldAccess(_, id) => ap.setSignatures(getFieldPermType(id))
+          case _ => ap.setSignatures(Scalar)
+        }
+      case _ =>
+    }
+
+  }
+
+  def getFieldPermType(fieldId: PIdnUse): PType = {
+    val decl = names.definition(curMember)(fieldId).asInstanceOf[PField]
+    if (decl.permId.isEmpty) Perm
+    else FastParser.permTypeMap.get(decl.permId.get.name).getOrElse(Perm)
   }
 
   //TODO: refactor this
@@ -356,11 +378,11 @@ case class TypeChecker(names: NameAnalyser) {
     val decl = names.definition(curMember)(id)
     acceptedClasses.find(_.isInstance(decl)) match {
       case Some(_) =>
-        if (!id.name.startsWith(names.permDomainPrefix)) {
+        if (!id.name.startsWith(FastParser.permDomainPrefix)) {
           messages ++= FastMessaging.message(id, errorMessage)
         } else {
           val id_suffix = id.name
-          if (id_suffix.replaceFirst(("^" + names.permDomainPrefix), "").length == 0) {
+          if (id_suffix.replaceFirst(("^" + FastParser.permDomainPrefix), "").length == 0) {
             messages ++= FastMessaging.message(id, errorMessage)
           }
         }
@@ -609,6 +631,7 @@ case class TypeChecker(names: NameAnalyser) {
       case PAmbiWildcard() =>
       case poa: POpApp =>
         if (poa.typeSubstitutions.isEmpty) {
+          updateSignatures(poa)
           poa.args.foreach(checkInternal)
           var nestedTypeError = !poa.args.forall(a => a.typ.isValidOrUndeclared)
           if (!nestedTypeError) {
@@ -680,12 +703,10 @@ case class TypeChecker(names: NameAnalyser) {
                 acceptAndCheckTypedEntity[PField, Nothing](Seq(idnuse), "expected field")(
                   (id, _) => checkInternal(id))
 
-              case PAccPred(loc, perm) =>
+              case PAccPred(loc, _) =>
                 loc match {
-                  case PFieldAccess(_, id) =>
-                    poa.asInstanceOf[PAccPred].setSignatures(getFieldPermType(id, perm))
+                  case PFieldAccess(_, _) =>
                   case pc: PCall if pc.extfunction != null =>
-                    poa.asInstanceOf[PAccPred].setSignatures(Scalar)
                   case _ =>
                     issueError(loc, "specified location is not a field nor a predicate")
                 }
@@ -702,6 +723,7 @@ case class TypeChecker(names: NameAnalyser) {
               case pecl: PEmptyCollectionLiteral if !pecl.pElementType.isValidOrUndeclared =>
                 check(pecl.pElementType)
 
+
               case _ =>
             }
 
@@ -711,6 +733,7 @@ case class TypeChecker(names: NameAnalyser) {
               assert(rlts.nonEmpty)
               val rrt: PDomainType = POpApp.pRes.substitute(ltr).asInstanceOf[PDomainType] // return type (which is a dummy type variable) replaced with fresh type
               val flat = poa.args.indices map (i => POpApp.pArg(i).substitute(ltr)) //fresh local argument types
+
               // the triples below are: (fresh argument type, argument type as used in domain of substitutions, substitutions)
               poa.typeSubstitutions ++= unifySequenceWithSubstitutions(rlts, flat.indices.map(i => (flat(i), poa.args(i).typ, poa.args(i).typeSubstitutions.distinct.toSeq)) ++
                 (
@@ -793,7 +816,6 @@ case class NameAnalyser() {
 
   /** To record error messages */
   var messages : FastMessaging.Messages = Nil
-  val permDomainPrefix = "_Perm_"
   val permDomainFuncs = List("unit", "full", "plus", "minus", "geq", "joinable")
 
   /** Resolves the entity to which the given identifier `idnuse` refers.
@@ -892,7 +914,7 @@ case class NameAnalyser() {
                 d match {
                   case pdf@PDomainFunction(_, _, _, _) =>
                     val domain = pdf.parent.get.asInstanceOf[PDomain]
-                    if (!domain.idndef.name.startsWith(permDomainPrefix))
+                    if (!domain.idndef.name.startsWith(FastParser.permDomainPrefix))
                       messages ++= FastMessaging.message(d.idndef, errorMessage)
                     else if (domain.funcs.exists(p => p.idndef.name != funcName && p.idndef.name.startsWith(funcNamePrefix))) {
                       messages ++= FastMessaging.message(d.idndef, "Duplicate " + funcNamePrefix + " function declaration in domain " + domain.idndef.name)
