@@ -971,7 +971,7 @@ object FastParser {
       // domain type without type arguments (might also be a type variable)
     idnuse.map(name => {
       val domainType = PDomainType(name, Nil)(name.pos)
-      if (name.name.startsWith(permDomainPrefix)) {
+      if (name.name.startsWith(permDomainPrefix) && !permTypeMap.contains(name.name)) {
         permTypeMap += (name.name -> domainType)
       }
       domainType

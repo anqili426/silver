@@ -30,8 +30,7 @@ object Permissions {
     assert(permFactor.typ == Scalar,
            "Internal error: attempted to permission-scale expression " + e.toString() +
                " by non-permission-typed expression " + permFactor.toString())
-
-    if(permFactor.isInstanceOf[FullPerm])
+    if(permFactor.isInstanceOf[IdScal])
       e
     else
       e.transform({
