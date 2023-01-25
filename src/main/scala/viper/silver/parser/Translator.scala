@@ -151,6 +151,20 @@ case class Translator(program: PProgram) {
     }
   }
 
+  private def translateAccPredPerm(loc: Exp, perm: PExp): Exp = {
+      if (perm.isInstanceOf[PAmbiWildcard]) {
+        loc match {
+          case fa@FieldAccess(_, _) =>
+            val permType = FastParser.permTypeMap.get(fa.permId).getOrElse(null)
+            if (permType == null) WildcardPerm()(perm)
+            else WildcardPerm()(pos=perm, permType=ttyp(permType))
+          case _ =>
+            // TODO: should return WildcardScal()(perm) in the future
+            WildcardPerm()(perm)
+        }
+      } else exp(perm)
+  }
+
   // helper methods that can be called if one knows what 'id' refers to
   private def findDomain(id: PIdentifier) = members(id.name).asInstanceOf[Domain]
   private def findField(id: PIdentifier) = members(id.name).asInstanceOf[Field]
@@ -472,18 +486,17 @@ case class Translator(program: PProgram) {
         FullPerm()(pos)
       case PIdScal() =>
         IdScal()(pos)
-      case PWildcard() =>
+      case PAmbiWildcard() =>
         WildcardPerm()(pos)
       case PEpsilon() =>
         EpsilonPerm()(pos)
       case PAccPred(loc, perm) =>
-        val p = exp(perm)
         exp(loc) match {
           case loc@FieldAccess(_, _) =>
-            FieldAccessPredicate(loc, p)(pos)
+            FieldAccessPredicate(loc, translateAccPredPerm(loc, perm))(pos)
           case loc@PredicateAccess(_, _) =>
-            PredicateAccessPredicate(loc, p)(pos)
-          case PredicateAccessPredicate(inner, _) => PredicateAccessPredicate(inner, p)(pos)
+            PredicateAccessPredicate(loc, translateAccPredPerm(loc, perm))(pos)
+          case loc@PredicateAccessPredicate(inner, _) => PredicateAccessPredicate(inner, translateAccPredPerm(loc, perm))(pos)
           case _ =>
             sys.error("unexpected location")
         }

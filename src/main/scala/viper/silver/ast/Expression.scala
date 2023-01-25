@@ -321,7 +321,9 @@ sealed trait ScalExp extends Exp {
 
 
 /** A wild card permission. Has an unknown value, but there are no guarantees that it will be the same inside one method. */
-case class WildcardPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends PermExp
+case class WildcardPerm()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos, val permType: Type = Perm) extends PermExp {
+  override lazy val typ = permType
+}
 
 /** A wild card scalar. Has an unknown value, but there are no guarantees that it will be the same inside one method. */
 case class WildcardScal()(val pos: Position = NoPosition, val info: Info = NoInfo, val errT: ErrorTrafo = NoTrafos) extends ScalExp
