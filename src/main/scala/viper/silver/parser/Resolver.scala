@@ -356,9 +356,13 @@ case class TypeChecker(names: NameAnalyser) {
         }
       case cp@PCurPerm(_) =>
         setCurPermSignatures(cp)
-      case ap@PAccPred(loc, _) =>
+      case ap@PAccPred(loc, perm) =>
         loc match {
           case PFieldAccess(_, id) => ap.setSignatures(getFieldPermType(id))
+            perm match {
+              case aw@PAmbiWildcard() => aw.typ = getFieldPermType(id)
+              case _ =>
+            }
           case _ => ap.setSignatures(Scalar)
         }
       case _ =>
