@@ -375,23 +375,20 @@ case class TypeChecker(names: NameAnalyser) {
     if (decl.permId.isEmpty) Perm
     else FastParser.permTypeMap.get(decl.permId.get.name).getOrElse(Perm)
   }
-
-  //TODO: refactor this
-  def checkIsPermModel(id: PIdnUse, errorMessage: String):Unit = {
-    val acceptedClasses = Seq[Class[_]](classTag[PDomain].runtimeClass)
+  
+  def checkIsPermModel(id: PIdnUse, errorMessage: String): Unit = {
     val decl = names.definition(curMember)(id)
-    acceptedClasses.find(_.isInstance(decl)) match {
-      case Some(_) =>
-        if (!id.name.startsWith(FastParser.permDomainPrefix)) {
-          messages ++= FastMessaging.message(id, errorMessage)
-        } else {
-          val id_suffix = id.name
-          if (id_suffix.replaceFirst(("^" + FastParser.permDomainPrefix), "").length == 0) {
-            messages ++= FastMessaging.message(id, errorMessage)
-          }
-        }
-      case None =>
+    if (decl.isInstanceOf[PDomain]) {
+      if (!id.name.startsWith(FastParser.permDomainPrefix)) {
         messages ++= FastMessaging.message(id, errorMessage)
+      } else {
+        val id_suffix = id.name
+        if (id_suffix.replaceFirst(("^" + FastParser.permDomainPrefix), "").length == 0) {
+          messages ++= FastMessaging.message(id, errorMessage)
+        }
+      }
+    } else {
+      messages ++= FastMessaging.message(id, errorMessage)
     }
   }
 
